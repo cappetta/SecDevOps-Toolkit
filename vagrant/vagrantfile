@@ -1,0 +1,155 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# handle the plugins dependencies in a nice-easy way
+# ref_url: https://github.com/DevNIX/Vagrant-dependency-manager
+require File.dirname(__FILE__)+"/vagrant_customizations/dependency_manager"
+check_plugins ["vagrant-docker-compose", "vagrant-awsinfo", "vagrant-docker-login", "vagrant-aws","vagrant-docker-login", "vagrant-share", "vagrant-winrm", "vagrant-winrm-syncedfolders", "vagrant-docker-login"]
+
+# Logic to determine the Operating System of the host...
+module OS
+    def OS.windows?
+        (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+    end
+
+    def OS.mac?
+        (/darwin/ =~ RUBY_PLATFORM) != nil
+    end
+
+    def OS.unix?
+        !OS.windows?
+    end
+
+    def OS.linux?
+        OS.unix? and not OS.mac?
+    end
+end
+
+require 'yaml'
+creds = YAML.load_file("./yaml/aws.yaml")
+nodes = YAML.load_file(creds['yaml_of_instances'])
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "dummy"
+  config.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+
+ nodes.each do |node|
+  config.vm.define node["name"] do |node_config|
+    if node["isWindows"]
+      config.vm.guest = :windows
+      config.vm.communicator = "winrm"
+      config.winrm.username = "vagrant"
+      config.winrm.password = "vagrant"	
+      config.windows.set_work_network = true
+      config.winrm.port = 5985
+      config.winrm.transport = :plaintext
+      config.winrm.max_tries=100
+    end
+    # setting some global timeout settings
+    # config.vm.boot_timeout = 600
+    # config.vm.graceful_halt_timeout = 600
+
+  node_config.vm.provider :aws do |aws, override|
+      aws.access_key_id = creds['access_key']
+      aws.secret_access_key = creds['secret_key']
+      aws.keypair_name = node['aws_keypair_name']
+      override.ssh.private_key_path = creds['private_key_path']
+      aws.region = node["region"]
+      aws.ami = node["ami"]
+      aws.associate_public_ip = true
+
+      if node["vpc_id"]
+        aws.tenancy = node['vpc_id']
+      end
+
+      aws.ssh_host_attribute = :private_ip_address
+
+## Updated logic - every node will have a user name defined w/ it until cloud-init/user-data is implemented/tested across platforms - windows would be defective
+# strategic ? How do we want to manager default user names of Cloud instances.  We could leverage the current usecases by creating an ami/family/user class.  Need to analyze 100m json file of AWS ami's.
+
+       if node["user"] 
+	      override.ssh.username = node["user"]
+      else
+        override.ssh.username = "ec2-user"
+      end
+
+      if node["subnet_id"]
+        aws.subnet_id = node["subnet_id"]
+      end
+
+      # VPC's can have specific security groups
+      if node['secgroup_name']
+        # puts "Debugging:: Sec Group: " + node['secgroup_name'].join(",")
+        aws.security_groups = node['secgroup_name']
+      end
+
+      if node["type"]
+        aws.instance_type = node["type"]
+      else
+        aws.instance_type = "t2.micro"
+      end
+      aws.tags = {
+        'Name' => node["name"],
+      }
+      unless node['userData'].nil?
+        aws.user_data = File.read(node['userData'])
+      end
+    end
+
+  #node_config.vm.synced_folder folder['local'], folder['virtual'] , type: 'rsync', :mount_options => ['dmode=775', 'fmode=775']
+  # todo: if isWindows then sync folders differently...
+#    if node["isWindows"]
+#       node_config.vm.synced_folder folder['local'], folder['virtual'] , type: "winrm"
+#    else
+#       node_config.vm.synced_folder folder['local'], folder['virtual'] , type: "rsync"
+#    end
+    node_config.vm.synced_folder "./shared", "/vagrantshared"
+    #node_config.vm.synced_folder "/root/git/qa-scripts", "/qa-scripts"
+# - nil chk logic for the yaml file.  Need to figure a good way of provisioning default w/ special across platforms
+#	unless node['folders'].nil?
+#          node['folders'].each do |folder|
+#        end
+#      end
+
+    if node["isWindows"]
+      node_config.vm.provision :shell, :path => "./shared/shell/main.cmd"
+   # else
+      #unless node["initScript"].nil?
+      #  node["initScript"].each do |script|
+      #    node_config.vm.provision :shell, path: script["init"], privileged: true
+ #         node_config.vm.provision :shell, inline: script["init"], privileged: true, env: {"VAGRANT_HOME" => "/var/vagrant"} #todo: test env variables are being created / captured
+      #  end
+      #end
+    end
+
+# todo: consider revising order of puppet / docker unless direct calls are made to the provisioning step
+  # Run Puppet Manifests to setup virtual Desktop env
+  #config.vm.provision :puppet do |puppet|
+  #  puppet.manifests_path = 'puppet/manifests'
+  #  puppet.manifest_file = 'site.pp'
+  #  puppet.module_path = 'puppet/modules'
+  #end
+end
+
+  # now provision Docker stuff - http://stackoverflow.com/questions/31623916/vagrant-docker-provisioner-doesnt-start-containers-on-boot
+  config.vm.provision :docker  # do |container|
+# - this doesn't work for tenable containers because we need to login first...
+# ----------------------------------------------------------------------------
+#	container.run "jwilder/nginx-proxy",
+#	args: "--restart=always -v /var/run/docker.sock:/tmp/docker.sock:ro -v /vagrant/certs:/etc/nginx/certs -p 80:80 -p 443:443"
+#  	container.run "redis",
+#	args: "--restart=always -v /vagrant/data:/data"   
+#  end # -- end do |container|
+#  config.vm.provision :docker_compose, yml: ["/vagrant/docker/docker-compose-manager-with-clients.yml"], rebuild: true, project_name: "tenable", run: "always"
+  config.vm.provision :docker_login, username: creds["docker_user"], email: creds["docker_email"], password: creds["docker_reg_pass"], server: creds["docker_registry_url"]
+#  config.vm.provision :docker_login, username: "tcappetta", email: "tcappetta@tenable.com", password: "d0ck3r", server: "https://docker-registry.lab.tenablesecurity.com"
+
+
+  # messages after booting - todo: check provisioning status w/ custom ruby code
+  # ref_url: http://stackoverflow.com/questions/30820949/print-message-after-booting-vagrant-machine-with-vagrant-up
+#  END {
+#    puts "Vagrant Command completed"
+#  }
+
+end
+end

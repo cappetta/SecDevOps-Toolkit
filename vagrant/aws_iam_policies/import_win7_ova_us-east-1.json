@@ -1,0 +1,9 @@
+[
+  {
+    "Description": "Windows 7 x64",
+    "Format": "ova",
+    "UserBucket": {
+      "S3Bucket": "s3_bucket_name",
+      "S3Key": "win7_64.ova"
+    }
+  }]
