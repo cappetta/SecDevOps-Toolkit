@@ -27,7 +27,7 @@ end
 
 require 'yaml'
 creds = YAML.load_file("./yaml/aws.yaml")
-nodes = YAML.load_file(creds['yaml_of_instances'])
+nodes = YAML.load_file("./yaml/instances.yaml")
 
 Vagrant.configure("2") do |config|
   config.vm.box = "dummy"
@@ -89,14 +89,14 @@ Vagrant.configure("2") do |config|
       end
     end
 
-    if node["isWindows"]
-       node_config.vm.synced_folder folder['local'], folder['virtual'] , type: "winrm"
-    else
-       node_config.vm.synced_folder folder['local'], folder['virtual'] , type: "rsync"
-    end
-    node_config.vm.synced_folder "./shared", "/vagrantshared"
+    # if node["isWindows"]
+    #    node_config.vm.synced_folder folder['local'], folder['virtual'] , type: "winrm"
+    # else
+    #    node_config.vm.synced_folder folder['local'], folder['virtual'] , type: "rsync"
+    # end
+    # node_config.vm.synced_folder "./shared", "/vagrantshared"
 # - nil chk logic for the yaml file.  Need to figure a good way of provisioning default w/ special across platforms
-	unless node['folders'].nil?
+	  unless node['folders'].nil?
           node['folders'].each do |folder|
         end
       end
@@ -114,22 +114,22 @@ Vagrant.configure("2") do |config|
 
 # todo: consider revising order of puppet / docker unless direct calls are made to the provisioning step
   # Run Puppet Manifests to setup env
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = 'puppet/manifests'
-    puppet.manifest_file = 'site.pp'
-    puppet.module_path = 'puppet/modules'
-  end
+#   config.vm.provision :puppet do |puppet|
+#     puppet.manifests_path = 'puppet/manifests'
+#     puppet.manifest_file = 'site.pp'
+#     puppet.module_path = 'puppet/modules'
+#   end
 end
 
   # now provision Docker stuff - http://stackoverflow.com/questions/31623916/vagrant-docker-provisioner-doesnt-start-containers-on-boot
-  config.vm.provision :docker  # do |container|
-	container.run "jwilder/nginx-proxy",
-	args: "--restart=always -v /var/run/docker.sock:/tmp/docker.sock:ro -v /vagrant/certs:/etc/nginx/certs -p 80:80 -p 443:443"
-  	container.run "redis",
-	args: "--restart=always -v /vagrant/data:/data"   
-  end # -- end do |container|
-  config.vm.provision :docker_compose, yml: ["/vagrant/docker/docker-compose-manager-with-clients.yml"], rebuild: true, project_name: "tenable", run: "always"
-  config.vm.provision :docker_login, username: creds["docker_user"], email: creds["docker_email"], password: creds["docker_reg_pass"], server: creds["docker_registry_url"]
+  # config.vm.provision :docker  # do |container|
+  # container.run "jwilder/nginx-proxy",
+  # args: "--restart=always -v /var/run/docker.sock:/tmp/docker.sock:ro -v /vagrant/certs:/etc/nginx/certs -p 80:80 -p 443:443"
+  # 	container.run "redis",
+  # args: "--restart=always -v /vagrant/data:/data"
+  # end # -- end do |container|
+  # config.vm.provision :docker_compose, yml: ["/vagrant/docker/docker-compose-manager-with-clients.yml"], rebuild: true, project_name: "tenable", run: "always"
+  # config.vm.provision :docker_login, username: creds["docker_user"], email: creds["docker_email"], password: creds["docker_reg_pass"], server: creds["docker_registry_url"]
 
 
   # messages after booting - todo: check provisioning status w/ custom ruby code
