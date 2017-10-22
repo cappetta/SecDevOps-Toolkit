@@ -27,7 +27,7 @@ end
 
 require 'yaml'
 creds = YAML.load_file("./yaml/aws.yaml")
-nodes = YAML.load_file("./yaml/instances.yaml")
+nodes = YAML.load_file("./yaml/seclab.yaml")
 
 Vagrant.configure("2") do |config|
   config.vm.box = "dummy"
