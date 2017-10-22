@@ -4,12 +4,19 @@
 # ------------------------------------------
 variable access_key {
   description = "The API Access key to AWS"
-  default="xxxxx"
+  default="xxxxxx"
 }
 
 variable secret_key {
   description = "The API Secret key to AWS"
-  default="xxxxx"
+  default="xxxxxx"
+}
+
+
+provider "aws" {
+  access_key = "${var.access_key}"
+  secret_key = "${var.secret_key}"
+  region = "us-east-2"
 }
 
 # ------------------------------------------
@@ -40,23 +47,8 @@ variable "secgroup_id" {
 
 variable "key_name" {
   description = "Name of the SSH keypair to use in AWS."
-  default = "xxxxx"
+  default = "xxxxxx"
 }
-
-
-data "aws_ami" "kali" {
-  most_recent = true
-
-  filter {
-    name = "name"
-    values = ["kali"]
-  }
-}
-# disable printing of AMI_ID
-# output "AMI ID" {
-#  value = "${data.aws_ami.ubuntu_1604.id}"
-#}
-
 
 
 variable "vpc_cidr" {
@@ -67,4 +59,9 @@ variable "vpc_cidr" {
 variable "private_subnet_cidr" {
   description = "CIDR for the Private Subnet"
   default = "10.2.1.0/24"
+}
+
+variable "public_subnet_cidr" {
+  description = "CIDR for the Private Subnet"
+  default = "10.2.2.0/24"
 }
