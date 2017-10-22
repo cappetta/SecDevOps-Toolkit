@@ -76,11 +76,11 @@ resource "aws_security_group" "nat" {
 
 resource "aws_instance" "nat" {
   ami = "ami-30913f47" # this is a special ami preconfigured to do NAT
-  availability_zone = "eu-west-1a"
+  availability_zone = "us-east-2a"
   instance_type = "m1.small"
-  key_name = "${var.aws_key_name}"
+  key_name = "${var.key_name}"
   vpc_security_group_ids = ["${aws_security_group.nat.id}"]
-  subnet_id = "${aws_subnet.eu-west-1a-public.id}"
+  subnet_id = "${aws_subnet.us-east-2_lab-public.id}"
   associate_public_ip_address = true
   source_dest_check = false
 
@@ -97,7 +97,7 @@ resource "aws_eip" "nat" {
 /*
   Public Subnet
 */
-resource "aws_subnet" "eu-west-1a-public" {
+resource "aws_subnet" "us-east-2_lab-public" {
   vpc_id = "${aws_vpc.default.id}"
 
   cidr_block = "${var.public_subnet_cidr}"
@@ -108,7 +108,7 @@ resource "aws_subnet" "eu-west-1a-public" {
   }
 }
 
-resource "aws_route_table" "eu-west-1a-public" {
+resource "aws_route_table" "us-east-2_lab-public" {
   vpc_id = "${aws_vpc.default.id}"
 
   route {
@@ -121,26 +121,26 @@ resource "aws_route_table" "eu-west-1a-public" {
   }
 }
 
-resource "aws_route_table_association" "eu-west-1a-public" {
-  subnet_id = "${aws_subnet.eu-west-1a-public.id}"
-  route_table_id = "${aws_route_table.eu-west-1a-public.id}"
+resource "aws_route_table_association" "us-east-2_lab-public" {
+  subnet_id = "${aws_subnet.us-east-2_lab-public.id}"
+  route_table_id = "${aws_route_table.us-east-2_lab-public.id}"
 }
 
 /*
   Private Subnet
 */
-resource "aws_subnet" "eu-west-1a-private" {
+resource "aws_subnet" "us-east-2_lab-private" {
   vpc_id = "${aws_vpc.default.id}"
 
   cidr_block = "${var.private_subnet_cidr}"
-  availability_zone = "eu-west-1a"
+  availability_zone = "us-east-2a"
 
   tags {
     Name = "Private Subnet"
   }
 }
 
-resource "aws_route_table" "eu-west-1a-private" {
+resource "aws_route_table" "us-east-2_lab-private" {
   vpc_id = "${aws_vpc.default.id}"
 
   route {
@@ -153,7 +153,7 @@ resource "aws_route_table" "eu-west-1a-private" {
   }
 }
 
-resource "aws_route_table_association" "eu-west-1a-private" {
-  subnet_id = "${aws_subnet.eu-west-1a-private.id}"
-  route_table_id = "${aws_route_table.eu-west-1a-private.id}"
+resource "aws_route_table_association" "us-east-2_lab-private" {
+  subnet_id = "${aws_subnet.us-east-2_lab-private.id}"
+  route_table_id = "${aws_route_table.us-east-2_lab-private.id}"
 }
