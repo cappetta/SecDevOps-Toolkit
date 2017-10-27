@@ -33,8 +33,6 @@ run_largest_first () {
     
     # echo before we execute...
     
-    
-    
     _debug
 
   done
@@ -59,12 +57,12 @@ execute_scan() {
   ts=$(date +%s)
   dir=$2
   nmap_test=$3
-  _debug
+# _debug
   threads=8
   #echo "executing the scan" 
   echo $1 > $dir/$nmap_test.sh
   chmod 744 $dir/$nmap_test.sh
-  ls -alrt $dir/$nmap_test.sh
+#  ls -alrt $dir/$nmap_test.sh
   processes=$(ps aux | grep -i "nmap --script" | wc -l)
   if [[ $processes -ge $threads ]]; then   
     _debug "sleeping...`date`" 
@@ -77,8 +75,9 @@ execute_scan() {
     processes=$(ps aux | grep -i "nmap --script" | wc -l)
    done
   fi
+_debug "running: $dir/$nmap_test.sh"
 $dir/$nmap_test.sh &> $dir/$nmap_test.out &
-  _debug
+#  _debug
 #  echo "time nmap --script $scripts -p $ports  $ips > $outfile"
 
 }
