@@ -14,3 +14,6 @@ services -o /tmp/info.csv
 
 - run the full nmap script test:
 ./full_nmap_script_test.sh
+
+
+The output from the full nmap script is stored in: /tmp/nmap_test/<service>/<script>.out
