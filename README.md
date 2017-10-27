@@ -9,9 +9,9 @@ Designers the ability to define, isolate, & automate dependencies to
 create a reproducible & automated application / infrastructure 
 environment.  
 
-The goal of this toolbox is to provide any individual with a framework
-to get started implementing the use of these tools for use-cases which
-benefit them.
+The goal of this toolbox is to provide the community with a framework
+which requires a simple configuration to use of these tools 
+for maximum benefit.
 
 # Tools in the ToolBox (Install Pre-req's)
 The tools directly below require you install them on your target system(s)
@@ -23,22 +23,16 @@ Download / Install: https://www.vagrantup.com/downloads.html
 ## Terraform
 Download / Install: https://www.terraform.io/downloads.html
 
-
-# Other Tools
-## Docker
-Everyone Loves Containers so here's an Awesome Docker Link: 
-https://github.com/veggiemonk/awesome-docker
-
-## Cloud-Init (AWS
+## Cloud-Init (AWS)
 There are 2 basic cloud-init files: 
   * Linux: linux.setup.yml
     - this initializes sudo w/o tty 
   * Windows: windows.setup
     - this creates terraform user w/ default pass, reduces UAC, shuts off firewall, enables winrm
-  
+
 ### Cloud-init Explained:
 Cloud-init is a tool which handles the initialization (bootstrapping) of 
-a cloud instance before it becomes available to the end-user.  
+a process/steps within a cloud instance before it becomes available to the end-user.  
 
 #### Cloud-Init Examples
 General Examples: https://cloudinit.readthedocs.io/en/latest/topics/examples.html
@@ -46,7 +40,10 @@ AWS (Windows): http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/UsingConfig
 Azure: https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/
 GCP: https://cloud.google.com/compute/docs/startupscript
     
-
+# Other Tools
+## Docker
+Everyone Loves Containers so here's an Awesome Docker Link: 
+https://github.com/veggiemonk/awesome-docker
 
 
 ## Chocolately  
@@ -78,6 +75,25 @@ challenges - does the software that gets installed = valid testing condition
 
 ## Vagrant - yaml
 
-vagrant has 2 primary yaml files.  One is the aws.yaml file which has the following format & holds the credentials.
+vagrant has 2 primary yaml files.  One is the aws.yaml file which has the following format & holds the credentials of the user.
+```
+---
+access_key='xxxxx'
+secret_key='xxxxx'
+```
 
 ## Terraform - hcl/json 
+Terraform requires manifests, essentially blueprints, which provide instructions on the resources and assets to create.  All resources have variablized attributes where defaults are stored in the variables.tf file and over-riden via commandline parameter.  For example:
+
+declare a variable for ami:
+```
+var amazon_ami {
+  description = 'This is an example variable for amazon ami settings'
+  default = ami-xyzxyz
+}
+```
+
+This command would override the default variable value and set the variable to ami-abcabc
+```
+terraform apply --target=aws_instance.example_instance -var 'amazon_ami=ami-abcabc'
+```
