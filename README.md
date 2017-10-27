@@ -32,8 +32,9 @@ https://github.com/veggiemonk/awesome-docker
 ## Cloud-Init (AWS
 There are 2 basic cloud-init files: 
   * Linux: linux.setup.yml
-    - this 
+    - this initializes sudo w/o tty 
   * Windows: windows.setup
+    - this creates terraform user w/ default pass, reduces UAC, shuts off firewall, enables winrm
   
 ### Cloud-init Explained:
 Cloud-init is a tool which handles the initialization (bootstrapping) of 
