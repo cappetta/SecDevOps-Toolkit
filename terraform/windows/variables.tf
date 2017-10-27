@@ -16,12 +16,12 @@ variable secret_key {
 # Testing variables
 # ------------------------------------------
 variable ticket {
-  description = "The ticket you are currently working on"
+  description = "The metadata about the item you are currently working on"
   default="xxxx"
 }
 
 variable branch {
-  description = "The actual branch name, which sometimes differs from the Ticket name"
+  description = "The feature-branch metadata"
   default="xxxx"
 }
 
@@ -81,22 +81,12 @@ variable "linux_userdata" {
 }
 
 
-variable nessus_centos_version {
-  description = "The docker-nessus tag value for the centos6 instance"
-  default = "master"
-}
-
-variable nessus_ubuntu_version {
-  description = "The docker-nessus tag value for the ubuntu16 instance"
-  default = "master"
-}
-
 
 # ------------------------------------------
 # AWS Facts & Data Source Declarations
 # ------------------------------------------
 variable vpc_id {
-  description = "The VPC we are using which provides connectivity from our Lab to AWS"
+  description = "The VPC we are using"
   default="vpc-xxxxxx"
 }
 
