@@ -2,10 +2,10 @@
 # @author: cappetta
 # purpose: Vagrant leverages yaml to define instances, initialization, provisioning dependencies, & files/folders
 ---
-- name: kali
-  ami:	ami-5008d946
+- name: kali_vagrant
+  ami:	ami-10b19275
   user: ec2-user
-  region:     'us-east-1'
+  region:     'us-east-2'
   subnet_id:   'subnet-xxxxxx'
   secgroup_name: 'sg-xxxxxx'
   aws_keypair_name: "xxxxxx"

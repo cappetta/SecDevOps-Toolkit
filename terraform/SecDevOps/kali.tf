@@ -2,7 +2,7 @@
 resource "aws_instance" "kali" {
   ami = "ami-10b19275"
   instance_type = "${var.instance_type}"
-  subnet_id = "${aws_subnet.us-east-2a_private.id}"
+  subnet_id = "subnet-xxxxxx"
   key_name = "${var.key_name}"
   vpc_security_group_ids = ["${var.secgroup_id}"]
   user_data = "${file("${var.linux_userdata}")}"
@@ -15,6 +15,19 @@ resource "aws_instance" "kali" {
 
 }
 
+resource "aws_instance" "splunk" {
+  ami = "ami-31153554"
+  instance_type = "${var.instance_type}"
+  subnet_id = "subnet-xxxxxx"
+  key_name = "${var.key_name}"
+  vpc_security_group_ids = ["${var.secgroup_id}"]
+  user_data = "${file("${var.linux_userdata}")}"
+  tags {
+    Name = "kali"
+    Auto-Off = "True",
+    Auto-Delete = "True"
+  }
+}
 
 /*
   private Subnet
