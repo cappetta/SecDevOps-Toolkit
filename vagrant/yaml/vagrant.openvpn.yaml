@@ -1,0 +1,36 @@
+# vagrant.yaml
+# @author: cappetta
+# purpose: Vagrant leverages yaml to define instances, initialization, provisioning dependencies, & files/folders
+---
+- name: openvpn_private
+  ami: 	ami-3267bb24
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxx
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "private-key"
+  type: "t2.micro"
+  user: "ubuntu"
+  userData: 'cloud-init/ubuntu_openvpn_channel.setup'
+  initScript:
+    - install_openvpn:
+      init: "./shared/shell/openvpn_install_1604.sh"
+- name: openvpn_1604
+  ami: 	ami-3267bb24
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxxx'
+  aws_keypair_name: "private-key"
+  type: "t2.micro"
+  user: "ubuntu"
+  userData: 'cloud-init/ubuntu_openvpn_channel.setup'
+
+- name:       openvpn_centos
+  ami:        'ami-6d1c2007'
+  user:       centos
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "private-key"
+  type: "t2.micro"
+  userData: ''
+  scanner: true
