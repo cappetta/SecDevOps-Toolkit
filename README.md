@@ -33,9 +33,9 @@ before using any of the examples in the vagrant/terraform folders.
     - vagrant - outlining
     
 ## Vagrant 
-Use-Case: Create & Provision Infrastructure
-Wiki: https://github.com/cappetta/SecDevOps-Toolkit/wiki/vagrant
-URL: https://www.vagrantup.com/downloads.html
+    Use-Case: Create & Provision Infrastructure
+    Wiki: https://github.com/cappetta/SecDevOps-Toolkit/wiki/vagrant
+    URL: https://www.vagrantup.com/downloads.html
 
 ## Terraform
 Use-Case: Create & Provision Infrastructure
