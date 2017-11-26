@@ -26,7 +26,12 @@ multi-asset
 # Features
 The tools directly below require you install them on your target system(s)
 before using any of the examples in the vagrant/terraform folders.
-## Wiki Content: 
+
+## Wiki Content:
+ The wiki contains key information outlining general usage of the tools:
+ 
+ https://github.com/cappetta/SecDevOps-Toolkit/wiki
+ 
     - Git Secrets - eliminate sensitive data from being committed
     - AWS Setup - obtaining api keys and setting up a cli
     - terraform -  general usage & argument syntax
