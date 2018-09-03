@@ -41,6 +41,12 @@ resource "aws_security_group" "nat" {
     protocol = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    from_port = 5901
+    to_port = 5901
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port = 80
@@ -64,6 +70,12 @@ resource "aws_security_group" "nat" {
     from_port = -1
     to_port = -1
     protocol = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port = 5901
+    to_port = 5901
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
