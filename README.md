@@ -1,31 +1,22 @@
 # Overview
 
-As a Cloud DevOps Security, I recognize the enormous value an organized
- toolbox full of automation utilities, cliff notes, & reference 
- repositories brings to any project at hand.
+As a Cloud Architect, I recognize the enormous business value that rapid 
+prototying & extreme programming principles provide to a global IT 
+workforce. 
 
-The tools within can be substituted for one of many alternatives. The 
-cloned repo's are believed to be both cutting-edge and stable references
-to additional tooling.
+The tools outlined below enable Developers, DevOps Engineers, &
+Designers the ability to define, isolate, & automate dependencies to 
+create a reproducible & automated application / infrastructure 
+environment.
 
-The goal is to outline a project agnostic automation tooling that
-DevOps engineers can leverage to quickly create, test, and deploy to 
-both simple & complex application environments. 
-
-From a **Security Perspective**, the need to act quickly to changing scenarios 
-is also very important.  From a time/effort perspective, there is a maximum
-benefit being able to automate an environment and add a step to a startup
-script to eliminate a newly released patch for an applications 
-vulnerability.  
-
-From a **Documentation Perspective**, the centralization of cliff-notes helps outline the common configuration 
-& usage of the tools.  If you've used one of them before then you will 
-quickly recognize how this can control single asset use-cases as well as
-multi-asset
+The goal of this toolbox is to provide any individual with a framework
+to get started implementing the use of these tools for use-cases which
+benefit them.
+ 
 
 # Features
-The tools directly below require you install them on your target system(s)
-before using any of the examples in the vagrant/terraform folders.
+The tools below require you download/install them on your target system(s)
+before using any of the examples in the folders.  
 
 ## Wiki Content:
  The wiki contains key information outlining general usage of the tools:
@@ -35,7 +26,9 @@ before using any of the examples in the vagrant/terraform folders.
     - Git Secrets - eliminate sensitive data from being committed
     - AWS Setup - obtaining api keys and setting up a cli
     - terraform -  general usage & argument syntax
-    - vagrant - outlining
+    - vagrant - create & share a
+    - puppet/ansible - configuraction mgmt tooling
+    - docker - 
     
 ## Vagrant 
     Use-Case: Create & Provision Infrastructure
