@@ -8,14 +8,15 @@ slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 # starterbot's ID as an environment variable
 # BOT_ID = os.environ.get("BOT_ID")
 
-def cmd_not_Found(command):
+def chk_cmd(cmd):
     '''
     if command is not in the dictionary of known commands then post msg indicating unknown cmd
-    :param command:
+    :param cmd:
     :return:
     '''
-    if False: return "That command was not found"
-    if True: return command + " Found"
+    if 'hi' in cmd: return "Hi"
+    else: return "That command was not found"
+    # if True: return command + " Found"
 
 def handle_command(command, channel):
     """
@@ -23,7 +24,7 @@ def handle_command(command, channel):
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
-    response = cmd_not_Found(command)
+    response = chk_cmd(command)
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
     response = "Not sure what you mean. Use the *" + EXAMPLE_COMMAND + \
@@ -32,7 +33,7 @@ def handle_command(command, channel):
         response = "Sure...write some more code then I can do that!"
         slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
-    elif command.startswith('help'):
+    elif command.startswith('help') or command.startswith('\h'):
         response    =   '@aws_bot <command> <arguments_or_options>' + "\n" \
                         '\h, help  provides this help screen' + "\n" \
                         'do        executes an aws commandlet' + "\n"
@@ -71,10 +72,7 @@ def checkMyAccount():
     checkPassAge();
     checkLastLogin();
 
-def createDockerNessus(branch, ticket):
-    pass
-
-def scanTargets(targets):
+def deploySomeInstances():
     pass
 
 
