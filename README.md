@@ -5,7 +5,7 @@ prototying & extreme programming principles provide to a global IT
 workforce. 
 
 The tools outlined below enable Developers, DevOps Engineers, &
-Designers the ability to define, isolate, & automate dependencies to 
+Architects the ability to define, isolate, & automate dependencies to 
 create a reproducible & automated application / infrastructure 
 environment.
 
