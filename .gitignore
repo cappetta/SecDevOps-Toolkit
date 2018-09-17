@@ -4,3 +4,5 @@ aws.yaml
 .pem
 keys
 fd_env
+.vagrant
+.terraform
