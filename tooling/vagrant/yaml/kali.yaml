@@ -1,0 +1,47 @@
+# vagrant.yaml
+# @author: cappetta
+# purpose: Vagrant leverages yaml to define instances, initialization, provisioning dependencies, & files/folders
+---
+- name: kali_mgmt_pub
+  ami:	ami-ccf446b5
+  user: ec2-user
+  region:     'eu-west-1'
+  vpc_id: 'vpc-xxx'
+  subnet_id:   'subnet-xxxx'
+  secgroup_name: 'sg-xxxx'
+  aws_keypair_name: "openvpn_dev"
+  type: "t2.medium"
+  userdata: "../cloud-init/kali.setup.yml"
+
+- name: kali_pub
+  ami:	ami-ccf446b5
+  user: ec2-user
+  region:     'eu-west-1'
+#  vpc_id: 'vpc-xxxxxx'
+  subnet_id:   'subnet-xxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "openvpn_dev"
+  type: "t2.medium"
+  userdata: "../cloud-init/kali.setup.yml"
+
+- name: kali_nat_a
+  ami:	ami-ccf446b5
+  user: ec2-user
+  region:     'eu-west-1'
+#  vpc_id: 'vpc-xxxxxx'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxx'
+  aws_keypair_name: "openvpn_dev"
+  type: "t2.medium"
+  userdata: "../cloud-init/kali.setup.yml"
+
+- name: kali_nat_b
+  ami:	ami-ccf446b5
+  user: ec2-user
+  region:     'eu-west-1'
+#  vpc_id: 'vpc-xxxxxx'
+  subnet_id:   'subnet-xxxxx'
+  secgroup_name: 'sg-xxxxx'
+  aws_keypair_name: "openvpn_dev"
+  type: "t2.medium"
+  userdata: "../cloud-init/kali.setup.yml"
