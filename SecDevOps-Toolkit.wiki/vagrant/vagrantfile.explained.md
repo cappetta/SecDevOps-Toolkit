@@ -14,8 +14,8 @@ vagrant currently has 494 plugins available.  To obtain a full list of
 available plugins perform `gem list --remote vagrant-` 
 
 
-A few of the common plugins I use are hard-coded into the vagrantfile on
-line 43: 
+The plugins I use managed are managed by the dependency_manager.rb script
+via the `check_plugins` array
   * vagrant-docker-login: https://github.com/leighmcculloch/vagrant-docker-login
   * vagrant-docker-compose: https://github.com/leighmcculloch/vagrant-docker-compose
   * vagrant-awsinfo:  https://github.com/johntdyer/vagrant-awsinfo
