@@ -1,3 +1,5 @@
+# contributor: jbaines
+
 import os
 import time
 import urllib
@@ -28,7 +30,7 @@ if __name__ == '__main__':
 
     while True:
         try:
-            feed = feedparser.parse('https://www.reddit.com/r/netsec/new/.rss')
+            feed = feedparser.parse('https://www.reddit.com/r/<something>/new/.rss')
             for entry in feed.entries:
                 if (entry.title.find("Security Hiring Thread") == -1 and entry.author != "/u/AutoModerator"):
                     print("entry_title: " + entry.title)
