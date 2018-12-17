@@ -1,5 +1,5 @@
 runcmd:
   - 'curl -O https://get.core.armor.com/latest/armor-agent.deb'
   - 'dpkg -i armor-agent.deb'
-  - '/opt/armor/armor register --license=293X9-C3YHG-D2F93-7WTTX-4M2PB'
+  - '/opt/armor/armor register --license=xxxx-xxxx-xxxx-xxxx'
   - 'service armor-agent start'
