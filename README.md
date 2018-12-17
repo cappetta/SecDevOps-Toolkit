@@ -40,13 +40,11 @@ before using any of the examples in the folders.
     - cloud-int
     
 ## Git-Secrets
-Hands-down the most important step you can do right now if you use
-AWS is to run this script in the root directory of all repo's you
-clone.  Human-Error will leak AWS keys and must run this in every 
-.git repository you want protected.
     
-If you read-this you need to take action right now & add this step into 
-any system you have a repository on.
+If you read-this you need to take action right now & execute these steps
+on any system you have work/develop on.  Human-Error will leak AWS keys 
+and must run this in every on any system which might have a repository 
+you want protected.
 
     1) Make a directory for the template: mkdir ~/.git-template
 
@@ -54,13 +52,17 @@ any system you have a repository on.
 
     3) Tell git to use it: git config --global init.templateDir ’~/.git-template’
 
-    4) Execute Git-Secrets install via: tooling/scripts/update_all_repos.sh
+    4) Execute Git-Secrets to install across all repos 
+        via: tooling/scripts/update_all_repos.sh
         
     Big Thanks to Nate Jacobs @sparkbox for outlining this solution in 
     his blog: https://seesparkbox.com/foundry/git_secrets
     
     original source: `https://gist.github.com/iAmNathanJ/0ae03dcb08ba222d36346b138e83bfdf`
-        
+
+Hands-down the most important step you can do right now if you use
+AWS, take the moment to [x] the box off your own systems now...
+
     
 ## Vagrant 
     Use-Case: Create & Provision Infrastructure
