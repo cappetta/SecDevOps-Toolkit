@@ -14,15 +14,11 @@ git clone https://github.com/OWASP/railsgoat.git
 # Setup NodeGoat
 git clone https://github.com/OWASP/NodeGoat.git
 
-
-
-
 docker run --rm -it -p 80:80 vulnerables/web-dvwa
 
 # Juice Shop
 # https://hub.docker.com/r/bkimminich/juice-shop/
 docker run --rm -p 3000:3000 bkimminich/juice-shop
-
 
 # reference: https://github.com/commjoen/ubuntu/blob/master/script/custom/provision-containers.sh
 
