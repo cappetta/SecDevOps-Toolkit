@@ -2,6 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 
+# todo: circleci_terraform project:perform testing and outline usages, expand to deeper health checks
 session = boto3.Session(profile_name='circleci')
 client = session.client('ec2', region_name='us-west-2')
 try:

@@ -6,7 +6,7 @@ Reference: https://gist.githubusercontent.com/vernhart/c6a0fc94c0aeaebe84e5cd6f3
 import sys
 import boto3
 
-
+# todo: circleci_terraform project:perform testing and outline usages, expand to deeper health checks
 def vpc_cleanup(vpcid):
     """Remove VPC from AWS
     Set your region/access-key/secret-key from env variables or boto config.

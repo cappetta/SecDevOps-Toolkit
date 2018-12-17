@@ -1,7 +1,7 @@
 import boto3
 import traceback
 
-
+# todo: circleci_terraform project:perform testing and outline usages, expand to deeper health checks
 class Delete_Default_VPC(object):
     def __init__(self):
         self.service_type = ‘ec2’
