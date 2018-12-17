@@ -1,19 +1,27 @@
 # Overview
 
-As a Cloud Architect, I recognize the enormous business value that rapid 
-prototying & extreme programming principles provide to a global IT 
-workforce. 
+As a SecDevOps Engineer, I need a toolkit of frameworks, bootstrap 
+solutions, vulnerable target manifests, and cliff-notes for research 
+to help 'sharpen the axe'.
 
-The tools outlined below enable Developers, DevOps Engineers, &
-Architects the ability to define, isolate, & automate dependencies to 
-create a reproducible & automated application / infrastructure 
-environment.
+As a Cyber Security Expert, I constantly research, explore, and 
+utilize various technologies to improve my capabilities, redefine
+processes, and 'sharpen my axe' across all operating systems, 
+technolgies, domains, languages, services, and protocols.
+  
+As a Cloud Architect, I recognize the enormous business value that rapid 
+prototying, automated orchestration, & continuous delivery provide to a 
+organization. 
+
+This project is an uncoordinated set of efforts from multiple sources, 
+where possible I've referenced the original source while consolidating 
+things into a single repository.  If I missed a reference to a source, 
+open an issue & I'll gladly provide credit toward the original source. 
 
 The goal of this toolbox is to provide any individual with a framework
 to get started implementing the use of these tools for use-cases which
 benefit them.
  
-
 # Features
 The tools below require you download/install them on your target system(s)
 before using any of the examples in the folders.  
@@ -28,7 +36,31 @@ before using any of the examples in the folders.
     - terraform -  general usage & argument syntax
     - vagrant - create & share a
     - puppet/ansible - configuraction mgmt tooling
-    - docker - 
+    - docker -
+    - cloud-int
+    
+## Git-Secrets
+Hands-down the most important step you can do right now if you use
+AWS is to run this script in the root directory of all repo's you
+clone.  Human-Error will leak AWS keys and must run this in every 
+.git repository you want protected.
+    
+If you read-this you need to take action right now & add this step into 
+any system you have a repository on.
+
+    1) Make a directory for the template: mkdir ~/.git-template
+
+    2) Install the hooks in the template directory: git secrets --install ~/.git-template
+
+    3) Tell git to use it: git config --global init.templateDir ’~/.git-template’
+
+    4) Execute Git-Secrets install via: tooling/scripts/update_all_repos.sh
+        
+    Big Thanks to Nate Jacobs @sparkbox for outlining this solution in 
+    his blog: https://seesparkbox.com/foundry/git_secrets
+    
+    original source: `https://gist.github.com/iAmNathanJ/0ae03dcb08ba222d36346b138e83bfdf`
+        
     
 ## Vagrant 
     Use-Case: Create & Provision Infrastructure
