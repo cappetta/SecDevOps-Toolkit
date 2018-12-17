@@ -27,7 +27,9 @@ The tools below require you download/install them on your target system(s)
 before using any of the examples in the folders.  
 
 ## Wiki Content:
- The wiki contains key information outlining general usage of the tools:
+ The wiki contains key information outlining general usage of the tools.  
+ The tooling folder contains a few other tools not outlined below and 
+ the supporting wiki sit ealso 
  
  https://github.com/cappetta/SecDevOps-Toolkit/wiki
  
