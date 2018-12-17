@@ -1,6 +1,8 @@
 # Overview
-The goal of the training folder is to provide hard references towards
-free resources which can help the security professional learn by doing.
+The goal of the training folder is to provide techical references and
+free resources to help the security professional.
+
+
 
 
  - http://www.webscantest.com/
