@@ -15,6 +15,8 @@ this contains an list of technical resources require further reading.  checkout 
 
 - [ ] AWS 
     - [ ] CloudMapper - AWS visualization
+    - [ ] [AutoTagging - exists in tooling/aws_iam_policies](./tooling/aws_iam_policies/AutoTag.template) 
+        https://aws.amazon.com/blogs/security/how-to-automatically-tag-amazon-ec2-resources-in-response-to-api-events/
     - [ ] Security Monkey:
     - [ ] Serverless w/ Lambda and API Gateway: https://www.terraform.io/docs/providers/aws/guides/serverless-with-aws-lambda-and-api-gateway.html
     - [ ] Create Lamba functions:
@@ -22,7 +24,7 @@ this contains an list of technical resources require further reading.  checkout 
             - https://github.com/nicholasjackson/slack-bot-lex-lambda/blob/master/terraform/lambda.tf
         - [ ] Honey Lambda: https://github.com/0x4D31/honeyLambda   
         - [ ] Setting up SecDevOps bots 
-            - [ ] reditbot 
+            - [ ] slackbot 
             - [ ] circleci bot / deployment bot 
             - [ ] Serverless Slack Bot(s):
                 - https://chatbotslife.com/write-a-serverless-slack-chat-bot-using-aws-e2d2432c380e

@@ -1,0 +1,340 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description"              : "",
+    "Metadata"                 : {
+        "AWS::CloudFormation::Interface" : {
+            "ParameterGroups" : [
+                {
+                    "Label" : {
+                        "default" : "Prerequisites"
+                    },
+                    "Parameters" : [
+                        "IsCloudTrailEnabled"
+                    ]
+                }
+            ],
+            "ParameterLabels" : {
+                "IsCloudTrailEnabled" : {
+                    "default" : "Is CloudTrail already enabled in this region? CloudTrail is a requirement for Cloudwatch Events. If not enabled, please enable CloudTrail before proceeding."
+                }
+            }
+        }
+    },
+    "Parameters"               : {
+        "IsCloudTrailEnabled" : {
+            "Description" : "Specify if CloudTrail is enabled in the current region",
+            "Type"        : "String",
+            "Default"     : "Yes",
+            "AllowedValues" : [
+                "Yes",
+                "No"
+            ]
+        }
+    },
+    "Conditions"               : {
+        "CreateResources" : {
+            "Fn::Equals" : [
+                {
+                    "Ref" : "IsCloudTrailEnabled"
+                },
+                "Yes"
+            ]
+        }
+    },
+    "Resources"                : {
+        "EC2EventRule" : {
+            "Type" : "AWS::Events::Rule",
+            "Condition" : "CreateResources",
+            "Properties" : {
+                "Description" : "Trigger a Lambda function anytime a new EC2 resource is created (EC2 instance, EBS volume, EBS Snapshot or AMI)",
+                "EventPattern" : {
+                    "detail-type" : [
+                        "AWS API Call via CloudTrail"
+                    ],
+                    "detail"      : {
+                        "eventSource" : [
+                            "ec2.amazonaws.com"
+                        ],
+                        "eventName"   : [
+                            "CreateVolume",
+                            "RunInstances",
+                            "CreateImage",
+                            "CreateSnapshot"
+                        ]
+                    }
+                },
+                "Name"         : "New-EC2Resource-Event",
+                "State"        : "ENABLED",
+                "Targets"      : [
+                    {
+                        "Arn" : {
+                            "Ref" : "ProductionAlias"
+                        },
+                        "Id"  : "Production"
+                    }
+                ]
+            }
+        },
+        "CFAutoTag"    : {
+            "Type" : "AWS::Lambda::Function",
+            "Condition" : "CreateResources",
+            "Properties" : {
+                "Code" : {
+                    "ZipFile" : {
+                        "Fn::Join" : [
+                            "\n",
+                            [
+                                "from __future__ import print_function",
+                                "import json",
+                                "import boto3",
+                                "import logging",
+                                "import time",
+                                "import datetime",
+                                "",
+                                "logger = logging.getLogger()",
+                                "logger.setLevel(logging.INFO)",
+                                "",
+                                "def lambda_handler(event, context):",
+                                "    #logger.info('Event: ' + str(event))",
+                                "    #print('Received event: ' + json.dumps(event, indent=2))",
+                                "",
+                                "    ids = []",
+                                "",
+                                "    try:",
+                                "        region = event['region']",
+                                "        detail = event['detail']",
+                                "        eventname = detail['eventName']",
+                                "        arn = detail['userIdentity']['arn']",
+                                "        principal = detail['userIdentity']['principalId']",
+                                "        userType = detail['userIdentity']['type']",
+                                "",
+                                "        if userType == 'IAMUser':",
+                                "            user = detail['userIdentity']['userName']",
+                                "",
+                                "        else:",
+                                "            user = principal.split(':')[1]",
+                                "",
+                                "",
+                                "        logger.info('principalId: ' + str(principal))",
+                                "        logger.info('region: ' + str(region))",
+                                "        logger.info('eventName: ' + str(eventname))",
+                                "        logger.info('detail: ' + str(detail))",
+                                "",
+                                "        if not detail['responseElements']:",
+                                "            logger.warning('Not responseElements found')",
+                                "            if detail['errorCode']:",
+                                "                logger.error('errorCode: ' + detail['errorCode'])",
+                                "            if detail['errorMessage']:",
+                                "                logger.error('errorMessage: ' + detail['errorMessage'])",
+                                "            return False",
+                                "",
+                                "        ec2 = boto3.resource('ec2')",
+                                "",
+                                "        if eventname == 'CreateVolume':",
+                                "            ids.append(detail['responseElements']['volumeId'])",
+                                "            logger.info(ids)",
+                                "",
+                                "        elif eventname == 'RunInstances':",
+                                "            items = detail['responseElements']['instancesSet']['items']",
+                                "            for item in items:",
+                                "                ids.append(item['instanceId'])",
+                                "            logger.info(ids)",
+                                "            logger.info('number of instances: ' + str(len(ids)))",
+                                "",
+                                "            base = ec2.instances.filter(InstanceIds=ids)",
+                                "",
+                                "            #loop through the instances",
+                                "            for instance in base:",
+                                "                for vol in instance.volumes.all():",
+                                "                    ids.append(vol.id)",
+                                "                for eni in instance.network_interfaces:",
+                                "                    ids.append(eni.id)",
+                                "",
+                                "        elif eventname == 'CreateImage':",
+                                "            ids.append(detail['responseElements']['imageId'])",
+                                "            logger.info(ids)",
+                                "",
+                                "        elif eventname == 'CreateSnapshot':",
+                                "            ids.append(detail['responseElements']['snapshotId'])",
+                                "            logger.info(ids)",
+                                "        else:",
+                                "            logger.warning('Not supported action')",
+                                "",
+                                "        if ids:",
+                                "            for resourceid in ids:",
+                                "                print('Tagging resource ' + resourceid)",
+                                "            ec2.create_tags(Resources=ids, Tags=[{'Key': 'Owner', 'Value': user}, {'Key': 'PrincipalId', 'Value': principal}])",
+                                "",
+                                "        logger.info(' Remaining time (ms): ' + str(context.get_remaining_time_in_millis()) + '\\n')",
+                                "        return True",
+                                "    except Exception as e:",
+                                "        logger.error('Something went wrong: ' + str(e))",
+                                "        return False"
+                            ]
+                        ]
+                    }
+                },
+                "Description" : "This function tags EC2 Resources in response to Cloudwatch Events.",
+                "Handler"     : "index.lambda_handler",
+                "Role"        : {
+                    "Fn::GetAtt" : [
+                        "LambdaAutoTagRole",
+                        "Arn"
+                    ]
+                },
+                "Runtime"     : "python2.7",
+                "Timeout"     : "60"
+            }
+        },
+        "StableVersion" : {
+            "Type" : "AWS::Lambda::Version",
+            "Condition" : "CreateResources",
+            "Properties" : {
+                "FunctionName" : {
+                    "Ref" : "CFAutoTag"
+                },
+                "Description"  : "Stable version"
+            }
+        },
+        "ProductionAlias" : {
+            "Type" : "AWS::Lambda::Alias",
+            "Condition" : "CreateResources",
+            "Properties" : {
+                "FunctionName" : {
+                    "Ref" : "CFAutoTag"
+                },
+                "FunctionVersion" : {
+                    "Fn::GetAtt" : [
+                        "StableVersion",
+                        "Version"
+                    ]
+                },
+                "Name"            : "PROD"
+            }
+        },
+        "PermissionForEventsToInvokeLambda" : {
+            "Type" : "AWS::Lambda::Permission",
+            "Properties" : {
+                "FunctionName" : {
+                    "Ref" : "ProductionAlias"
+                },
+                "Action"       : "lambda:InvokeFunction",
+                "Principal"    : "events.amazonaws.com",
+                "SourceArn"    : {
+                    "Fn::GetAtt" : [
+                        "EC2EventRule",
+                        "Arn"
+                    ]
+                }
+            }
+        },
+        "LambdaAutoTagRole"                 : {
+            "Type" : "AWS::IAM::Role",
+            "Condition" : "CreateResources",
+            "Properties" : {
+                "AssumeRolePolicyDocument" : {
+                    "Version" : "2012-10-17",
+                    "Statement" : [
+                        {
+                            "Effect" : "Allow",
+                            "Principal" : {
+                                "Service" : [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Action"    : [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Policies"                 : [
+                    {
+                        "PolicyName" : "LambdaGetLatestWindowsAmiIdPolicy",
+                        "PolicyDocument" : {
+                            "Version" : "2012-10-17",
+                            "Statement" : [
+                                {
+                                    "Sid" : "Stmt1458923097000",
+                                    "Effect" : "Allow",
+                                    "Action" : [
+                                        "cloudtrail:LookupEvents"
+                                    ],
+                                    "Resource" : [
+                                        "*"
+                                    ]
+                                },
+                                {
+                                    "Sid" : "Stmt1458923121000",
+                                    "Effect" : "Allow",
+                                    "Action" : [
+                                        "ec2:CreateTags",
+                                        "ec2:Describe*",
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Resource" : [
+                                        "*"
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "ManageEC2InstancesGroup"                : {
+            "Type" : "AWS::IAM::Group",
+            "Condition" : "CreateResources"
+        },
+        "TagBasedEC2RestrictionsPolicy"     : {
+            "Type" : "AWS::IAM::ManagedPolicy",
+            "Condition" : "CreateResources",
+            "Properties" : {
+                "Description" : "This policy allows Start/Stop/Reboot/Terminate for EC2 instances where the tag 'Owner' doesn't match the current requester's user ID.",
+                "PolicyDocument" : {
+                    "Version" : "2012-10-17",
+                    "Statement" : [
+                        {
+                            "Sid" : "LaunchEC2Instances",
+                            "Effect" : "Allow",
+                            "Action" : [
+                                "ec2:Describe*",
+								"ec2:RunInstances"
+                            ],
+                            "Resource" : [
+                                "*"
+                            ]
+                        },
+                        {
+                            "Sid" : "AllowActionsIfYouAreTheOwner",
+                            "Effect" : "Allow",
+                            "Action" : [
+                                "ec2:StopInstances",
+                                "ec2:StartInstances",
+                                "ec2:RebootInstances",
+                                "ec2:TerminateInstances"
+                            ],
+                            "Condition" : {
+                                "StringEquals" : {
+                                    "ec2:ResourceTag/PrincipalId" : "${aws:userid}"
+                                }
+                            },
+                            "Resource"  : [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "Groups"         : [
+                    {
+                        "Ref" : "ManageEC2InstancesGroup"
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs"                  : {
+    }
+}
