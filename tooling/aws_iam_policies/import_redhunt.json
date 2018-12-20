@@ -1,0 +1,9 @@
+[
+  {
+    "Description": "RedHunt",
+    "Format": "ova",
+    "UserBucket": {
+      "S3Bucket": "YouRBucketName",
+      "S3Key": "redhunt.ova"
+    }
+  }]
