@@ -2,21 +2,43 @@
 The goal is to create a repository of automation tools which can be used easily by many individuals. To gain the maximum value out of the entire solution, you should seek to master each tool and find creative ways to leverage all of the tools.  
 
 The wiki will be used to help create a simple outline of configurations, setups, and cliff-note guides to get someone up and running quickly.
+    
+## Git-Secrets
+    
+If you read-this you need to take action immediately. Simply execute 
+these steps on any system w/ a git-repo.  
 
-## Git Setup:
-If you are actively cloning, forking, and pushing files into git then it is strongly advised that you setup the git-secrets tooling to prevent leakage of any sensitive information into your git repo.
+Human-Error will leak AWS keys and this prevents any accident commits to git.
 
+    1) Make a directory for the template: mkdir ~/.git-template
+
+    2) Install the hooks in the template directory: git secrets --install ~/.git-template
+
+    3) Tell git to use it: git config --global init.templateDir ’~/.git-template’
+
+    4) Execute Git-Secrets to install across all repos 
+        via: tooling/scripts/update_all_repos.sh
+        
+    Big Thanks to Nate Jacobs @sparkbox for outlining this solution in 
+    his blog: https://seesparkbox.com/foundry/git_secrets
+    
+    original source: `https://gist.github.com/iAmNathanJ/0ae03dcb08ba222d36346b138e83bfdf`
+
+Hands-down the most important step you can do right now is 
+ to take the moment to [x] the box off your own systems now...
+
+
+## Git-Secrets Rules:
 This tooling sets up commit hooks which are executed with each commit.  The goal is simply to reject commits which contain any secret or custom defined private data.
 
 https://github.com/awslabs/git-secrets
-
 
 Useful Git-secret regexs:
 
   ```
   git secrets --add 'subnet-[a-z0-9]+'
   git secrets --add 'sg-[a-z0-9]+'
-  git secrets --add --literal 'aws_keypair_name: "automation"'
+  git secrets --add --literal 'aws_keypair_name: "someAmazingKeyName"'
   git secrets --add -a "subnet-xxxxxxx|sg-xxxxxxx|(xx)+|name_of_aws_keypair"
   ```
 
