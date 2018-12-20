@@ -1,156 +1,869 @@
-# Checklist
 
-this contains an list of technical resources require further reading.  checkout the repo, perform your research, and update the readme with an x in the [ ] to track your SecDevOps Research.
+[ ] README.md
+[ ] armor
+   [ ] Dockerfile
+   [ ] Dockerrun.aws.json
+   [ ] app.zip
+   [ ] application.py
+   [ ] cron.yaml
+[ ] aws_iam_policies
+   [ ] AutoTag.template
+   [ ] IAM_user.json.template
+   [ ] README.md
+   [ ] aws_iam_ec2_instance_restrictions.json
+   [ ] aws_iam_ec2_instance_type_restriction.json
+   [ ] aws_iam_multiregion_ec2_instance_type_restriction.json
+   [ ] import_redhunt.json
+   [ ] import_win7.json
+   [ ] import_win7_ova.json
+   [ ] import_win7_ova_us-east-1.json
+   [ ] s3_push_artifacts_into_bucket.json
+   [ ] slack-lambda-ec2-controller-user-policy.json
+   [ ] vmimport-role-policy.json
+   [ ] vmimport-trust-policy.json
+[ ] cloud-init
+   [ ] README.md
+   [ ] armor_install_register.yml
+   [ ] armor_install_register_debian.yml
+   [ ] armor_install_win2012-16.yml
+   [ ] centos.docker.setup.yml
+   [ ] kali.setup.yml
+   [ ] linux.setup.yml
+   [ ] samba.setup.yml
+   [ ] ubuntu_docker_init.yml
+   [ ] windows.setup.yml
+   [ ] windows.smbv3_disable.setup.yml
+   [ ] windows.smbv3_enable.setup.yml
+[ ] docker
+   [ ] README.md
+   [ ] cicd_terraform_inspec
+      [ ] Dockerfile
+   [ ] owasp_vuln_asset_setup_cliffnotes.md
+   [ ] supervisord
+       [ ] supervisord-mysqld.conf
+       [ ] supervisord-tomcat.conf
+[ ] lambda
+   [ ] async_deploy.py
+   [ ] aws_slack_controller_bot.py
+   [ ] lambda_download_to_s3.py
+   [ ] slack_aws_terminate.py
+[ ] opsec
+   [ ] README.md
+[ ] packer
+   [ ] quick-start.json
+[ ] puppet
+   [ ] Puppetfile
+[ ] repos
+   [ ] datasploit
+      [ ] LICENSE
+      [ ] README.md
+      [ ] __init__.py
+      [ ] active_default_file_check.py
+      [ ] active_scan.py
+      [ ] base.html
+      [ ] check_urls.txt
+      [ ] config_sample.py
+      [ ] contributors.txt
+      [ ] datasploit.py
+      [ ] datasploit_config.py
+      [ ] dep_check.py
+      [ ] docs
+         [ ] Usage.md
+         [ ] Writing_Modules.md
+         [ ] apiGeneration.md
+         [ ] contributors.md
+         [ ] home.md
+         [ ] index.md
+         [ ] roadmap.md
+         [ ] setupGuide.md
+      [ ] domain
+         [ ] __init__.py
+         [ ] base.py
+         [ ] domain_GooglePDF.py
+         [ ] domain_censys.py
+         [ ] domain_checkpunkspider.py
+         [ ] domain_dnsrecords.py
+         [ ] domain_emailhunter.py
+         [ ] domain_forumsearch.py
+         [ ] domain_github.py
+         [ ] domain_googletracking.py
+         [ ] domain_history.py
+         [ ] domain_pagelinks.py
+         [ ] domain_pastes.py
+         [ ] domain_shodan.py
+         [ ] domain_subdomains.py
+         [ ] domain_urlscanio.py
+         [ ] domain_wappalyzer.py
+         [ ] domain_whois.py
+         [ ] domain_wikileaks.py
+         [ ] domain_zoomeye.py
+         [ ] template.py
+      [ ] domainOsint.py
+      [ ] emailOsint.py
+      [ ] emails
+         [ ] __init__.py
+         [ ] base.py
+         [ ] email_basic_checks.py
+         [ ] email_clearbit.py
+         [ ] email_fullcontact.py
+         [ ] email_hacked_emails.py
+         [ ] email_haveibeenpwned.py
+         [ ] email_pastes.py
+         [ ] email_scribd.py
+         [ ] email_slideshare.py
+         [ ] email_whoismind.py
+         [ ] template.py
+      [ ] ip
+         [ ] __init__.py
+         [ ] base.py
+         [ ] ip_shodan.py
+         [ ] ip_virustotal.py
+         [ ] ip_whois.py
+         [ ] template.py
+      [ ] ipOsint.py
+      [ ] mkdocs.yml
+      [ ] osint_runner.py
+      [ ] reports
+         [ ] README
+      [ ] requirements.txt
+      [ ] roadmap.txt
+      [ ] ssh
+         [ ] id_rsa
+         [ ] id_rsa.pub
+      [ ] username
+         [ ] __init__.py
+         [ ] base.py
+         [ ] template.py
+         [ ] username_gitemails.py
+         [ ] username_gitlabdetails.py
+         [ ] username_gitscrape.py
+         [ ] username_gituserdetails.py
+         [ ] username_keybase.py
+         [ ] username_profilepic.py
+         [ ] username_redditdetails.py
+         [ ] username_tinder.py
+         [ ] username_traviscidetails.py
+         [ ] username_twitterdetails.py
+         [ ] username_usernamesearch.py
+         [ ] username_youtubedetails.py
+      [ ] usernameOsint.py
+      [ ] vault.py
+   [ ] learning-tools
+       [ ] CONTRIBUTING.md
+       [ ] LICENSE
+       [ ] README.md
+       [ ] ansible
+          [ ] README.md
+          [ ] ansible-aws
+             [ ] README.md
+             [ ] ansible.cfg
+             [ ] create.yml
+             [ ] delete.yml
+             [ ] ec2.ini
+             [ ] ec2.py
+             [ ] inventory
+          [ ] bootstrap
+             [ ] README.md
+             [ ] ansible.cfg
+             [ ] bootstrap.yml
+             [ ] compute.tf
+             [ ] datasources.tf
+             [ ] ec2.ini
+             [ ] ec2.py
+             [ ] provider.tf
+             [ ] variables.tf
+          [ ] extract-gh-archive
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+             [ ] provision.yml
+          [ ] kubeadm-template
+             [ ] README.md
+             [ ] kubeadm.conf.j2
+             [ ] template.yml
+          [ ] src-dst-list
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] docker-socket.conf
+              [ ] docker-tcp.socket
+              [ ] docker.socket
+              [ ] machines.yml
+              [ ] provision.yml
+       [ ] centos-atomic
+          [ ] README.md
+          [ ] docker-cloudinit
+             [ ] README.md
+             [ ] cloud-config.yml
+             [ ] launch.sh
+             [ ] ssh.cfg
+          [ ] docker-tcp
+             [ ] Vagrantfile
+             [ ] docker-socket.conf
+             [ ] docker-tcp.socket
+             [ ] docker.socket
+             [ ] machines.yml
+             [ ] setup.sh
+          [ ] docker-tcp-ansible
+              [ ] Vagrantfile
+              [ ] ansible.yml
+              [ ] docker-socket.conf
+              [ ] docker-tcp.socket
+              [ ] docker.socket
+              [ ] machines.yml
+       [ ] consul
+          [ ] README.md
+          [ ] consul
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] consul.conf
+             [ ] consul.sh
+             [ ] machines.yml
+             [ ] server.json
+          [ ] consul-ansible
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] ansible.cfg
+              [ ] config.json.j2
+              [ ] consul.conf
+              [ ] hosts
+              [ ] machines.yml
+              [ ] provision.yml
+       [ ] coreos
+          [ ] README.md
+          [ ] cloudinit-toolbox
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+              [ ] user-data
+       [ ] debian
+          [ ] README.md
+          [ ] debian-generic
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+          [ ] stretch-generic
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+       [ ] docker
+          [ ] README.md
+          [ ] atomic-swarm-mode
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+          [ ] containerd-runc
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] machines.yml
+             [ ] provision.yml
+          [ ] coreos-swarm-mode
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+          [ ] docker-ce-edge
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] machines.yml
+             [ ] provision.yml
+          [ ] ipvlan-l2
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] docker-provision.sh
+             [ ] machines.yml
+             [ ] remote-provision.sh
+          [ ] ipvlan-l3
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] docker-01-setup.sh
+             [ ] docker-02-setup.sh
+             [ ] machines.yml
+          [ ] ipvs
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+             [ ] provision.sh
+          [ ] macvlan
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+          [ ] swarm-consul
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] config.json.erb
+             [ ] consul.conf
+             [ ] consul.sh
+             [ ] machines.yml
+             [ ] user-data
+          [ ] swarm-etcd
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] etcd.conf
+             [ ] etcd.defaults.erb
+             [ ] machines.yml
+             [ ] provision.sh
+             [ ] user-data
+          [ ] swarm-etcd2-photon
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] cfg-docker.yml
+             [ ] cfg-etcd.yml
+             [ ] docker-tcp.socket
+             [ ] docker.service
+             [ ] docker.socket
+             [ ] etcd.conf
+             [ ] etcd.defaults.erb
+             [ ] machines.yml
+          [ ] swarm-ha
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] config.json.erb
+             [ ] consul.conf
+             [ ] consul.sh
+             [ ] machines.yml
+          [ ] ubuntu-swarm-mode
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] ansible.cfg
+              [ ] create-swarm.yml
+              [ ] destroy-swarm.yml
+              [ ] machines.yml
+              [ ] provision.yml
+       [ ] etcd
+          [ ] README.md
+          [ ] etcd-2.0
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] etcd.conf
+             [ ] etcd.defaults.erb
+             [ ] machines.yml
+             [ ] provision.sh
+          [ ] etcdv3-ansible-aws-tf
+              [ ] README.md
+              [ ] ansible.cfg
+              [ ] data.tf
+              [ ] ec2.ini
+              [ ] ec2.py
+              [ ] etcd.conf.j2
+              [ ] etcd.service
+              [ ] etcd.yml
+              [ ] main.tf
+              [ ] modules
+                 [ ] instance-cluster
+                    [ ] main.tf
+                    [ ] output.tf
+                    [ ] variables.tf
+                 [ ] vpc
+                     [ ] data.tf
+                     [ ] main.tf
+                     [ ] output.tf
+                     [ ] variables.tf
+              [ ] provider.tf
+              [ ] variables.tf
+       [ ] fedora-atomic
+          [ ] 26-atomic-generic
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+          [ ] 27-atomic-generic
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+       [ ] kubernetes
+          [ ] kubeadm-vagrant
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] ansible.cfg
+              [ ] machines.yml
+              [ ] provision.yml
+       [ ] kvm
+          [ ] README.md
+          [ ] kvm-generic
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] machines.yml
+             [ ] provision.yml
+          [ ] kvm-macvtap
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] ansible.cfg
+              [ ] machines.yml
+              [ ] macvtap.xml
+              [ ] provision.yml
+       [ ] lxc-lxd
+          [ ] README.md
+          [ ] lxc
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] machines.yml
+             [ ] provision.yml
+          [ ] lxd-ansible
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] ansible.yml
+             [ ] machines.yml
+          [ ] lxd-ovs
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+             [ ] setup.sh
+          [ ] lxd-shell
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+              [ ] setup.sh
+       [ ] netos
+          [ ] README.md
+          [ ] junos
+              [ ] Vagrantfile
+              [ ] Vagrantfile-working
+              [ ] devices.yml
+       [ ] openstack
+          [ ] README.md
+          [ ] cli
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] adminrc
+             [ ] config.sh
+             [ ] machines.yml
+          [ ] swarm-consul
+              [ ] README.md
+              [ ] consul-cluster.yml
+              [ ] consul-software-config.yml
+              [ ] coreos-cluster.yml
+              [ ] docker-swarm.yml
+              [ ] docker-workloads.yml
+       [ ] ovs-ovn
+          [ ] README.md
+          [ ] ovn
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] machines.yml
+             [ ] provision.yml
+             [ ] setup.sh.j2
+          [ ] ovn-docker-ansible
+             [ ] 10-exec-options.conf.j2
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] config.json.j2
+             [ ] consul-server.service
+             [ ] machines.yml
+             [ ] provision.yml
+             [ ] setup.sh.j2
+             [ ] update.yml
+          [ ] ovn-kvm
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] final-setup.sh
+             [ ] machines.yml
+             [ ] net-setup.sh
+             [ ] ovn-setup.sh.j2
+             [ ] ovs.xml
+             [ ] provision.yml
+             [ ] vm-setup.sh
+          [ ] ovs-geneve
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] machines.yml
+             [ ] provision.yml
+             [ ] setup.sh
+          [ ] ovs-multi-br
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] br0.xml
+             [ ] br1.xml
+             [ ] machines.yml
+             [ ] provision.yml
+          [ ] ovs-simple
+              [ ] Vagrantfile
+              [ ] ansible.cfg
+              [ ] machines.yml
+              [ ] provision.retry
+              [ ] provision.yml
+       [ ] packer
+          [ ] README.md
+          [ ] aws-ami-ansible
+              [ ] README.md
+              [ ] ansible.yml
+              [ ] roles
+                 [ ] docker-ce-edge
+                     [ ] tasks
+                         [ ] main.yml
+              [ ] template.json
+              [ ] variables.json
+       [ ] photon
+          [ ] README.md
+          [ ] photon-ansible
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] ansible.cfg
+             [ ] ansible.yml
+             [ ] docker-tcp.socket
+             [ ] docker.service
+             [ ] docker.socket
+             [ ] machines.yml
+          [ ] photon-cloudinit
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+             [ ] meta-data
+             [ ] setup.sh
+             [ ] user-data
+          [ ] photon-generic
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+       [ ] rkt
+          [ ] README.md
+          [ ] rkt-ubuntu
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+              [ ] provision.sh
+       [ ] ssh
+          [ ] README.md
+          [ ] ssh-bastion
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] bastion-hosts
+             [ ] bastion_rsa
+             [ ] bastion_rsa.pub
+             [ ] client-ssh-config
+             [ ] machines.yml
+             [ ] remote_rsa
+             [ ] remote_rsa.pub
+             [ ] ssh-bastion-diagram.png
+          [ ] ssh-bastion-ansible
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] bastion_rsa
+              [ ] bastion_rsa.pub
+              [ ] config
+              [ ] machines.yml
+              [ ] provision.yml
+              [ ] remote_rsa
+              [ ] remote_rsa.pub
+              [ ] ssh-bastion-diagram.png
+       [ ] terraform
+          [ ] README.md
+          [ ] aws
+             [ ] README.md
+             [ ] asg-elb
+                [ ] README.md
+                [ ] data.tf
+                [ ] main.tf
+                [ ] output.tf
+                [ ] provider.tf
+                [ ] variables.tf
+             [ ] bastion-aws
+                [ ] README.md
+                [ ] data.tf
+                [ ] instances.tf
+                [ ] networking.tf
+                [ ] output.tf
+                [ ] provider.tf
+                [ ] security.tf
+                [ ] ssh.cfg.example
+                [ ] variables.tf
+             [ ] ic-module
+                [ ] README.md
+                [ ] data.tf
+                [ ] main.tf
+                [ ] modules
+                   [ ] instance-cluster
+                      [ ] main.tf
+                      [ ] output.tf
+                      [ ] variables.tf
+                   [ ] vpc
+                       [ ] data.tf
+                       [ ] main.tf
+                       [ ] output.tf
+                       [ ] variables.tf
+                [ ] provider.tf
+                [ ] variables.tf
+             [ ] ic-module-asg
+                [ ] README.md
+                [ ] data.tf
+                [ ] main.tf
+                [ ] modules
+                   [ ] ic-asg
+                      [ ] main.tf
+                      [ ] variables.tf
+                   [ ] vpc
+                       [ ] data.tf
+                       [ ] main.tf
+                       [ ] output.tf
+                       [ ] variables.tf
+                [ ] provider.tf
+                [ ] variables.tf
+             [ ] new-vpc
+                [ ] README.md
+                [ ] data.tf
+                [ ] main.tf
+                [ ] output.tf
+                [ ] provider.tf
+                [ ] variables.tf
+             [ ] simple-ec2
+                [ ] README.md
+                [ ] data.tf
+                [ ] main.tf
+                [ ] output.tf
+                [ ] provider.tf
+                [ ] variables.tf
+             [ ] simple-module
+                [ ] README.md
+                [ ] main.tf
+                [ ] modules
+                   [ ] vpc
+                       [ ] main.tf
+                       [ ] output.tf
+                       [ ] variables.tf
+                [ ] provider.tf
+                [ ] variables.tf
+             [ ] vpc-all-azs
+                 [ ] README.md
+                 [ ] data.tf
+                 [ ] main.tf
+                 [ ] provider.tf
+                 [ ] variables.tf
+          [ ] tf-general
+              [ ] README.md
+              [ ] tf-example
+                 [ ] main.tf
+                 [ ] output.tf
+                 [ ] provider.tf
+                 [ ] vars.tf
+              [ ] tf-json-example
+                  [ ] main.tf.json
+                  [ ] output.tf.json
+                  [ ] provider.tf.json
+                  [ ] vars.tf.json
+       [ ] traefik
+          [ ] README.md
+          [ ] aws-tf-traefik
+             [ ] README.md
+             [ ] compute.tf
+             [ ] data.tf
+             [ ] networking.tf
+             [ ] output.tf
+             [ ] provider.tf
+             [ ] security.tf
+             [ ] variables.tf
+          [ ] tf-ans-swarm
+             [ ] README.md
+             [ ] ansible.cfg
+             [ ] compute.tf
+             [ ] create-swarm.yml
+             [ ] data.tf
+             [ ] destroy-swarm.yml
+             [ ] ec2.ini
+             [ ] ec2.py
+             [ ] networking.tf
+             [ ] output.tf
+             [ ] provider.tf
+             [ ] security.tf
+             [ ] variables.tf
+          [ ] vagrant-ansible
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] ansible.cfg
+              [ ] create-swarm.yml
+              [ ] destroy-swarm.yml
+              [ ] machines.yml
+              [ ] provision.yml
+       [ ] ubuntu
+          [ ] README.md
+          [ ] ubuntu-generic
+             [ ] README.md
+             [ ] Vagrantfile
+             [ ] machines.yml
+          [ ] xenial-generic
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+       [ ] vagrant
+           [ ] README.md
+           [ ] aws
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] instances.yml
+           [ ] aws-multi
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] instances.yml
+           [ ] azure
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] instances.yml
+           [ ] complex-json
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.json
+           [ ] complex-yaml
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+           [ ] docker
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] host
+                  [ ] Vagrantfile
+           [ ] docker-json
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] containers.json
+              [ ] host
+                  [ ] Vagrantfile
+           [ ] docker-yaml
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] VagrantfileHost
+              [ ] containers.yml
+              [ ] hostvms.yml
+           [ ] json
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.json
+           [ ] multi-platform
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] machines.yml
+           [ ] multi-provider
+              [ ] Vagrantfile
+              [ ] machines.yml
+           [ ] openstack
+              [ ] README.md
+              [ ] Vagrantfile
+              [ ] credentials.yml
+              [ ] instances.yml
+           [ ] openstack-multi
+               [ ] README.md
+               [ ] Vagrantfile
+               [ ] credentials.yml
+               [ ] instances.yml
+[ ] scripts
+   [ ] clone_dependent_repos.sh
+   [ ] docker_owasp-dependency-check.sh
+   [ ] git-secrets_update_all_repos.sh
+   [ ] python
+      [ ] check_assets.py
+      [ ] delete_aws_vpc.py
+      [ ] remove_default_vpc.py
+   [ ] security_monkey_install.sh
+[ ] slack
+   [ ] bootstrap
+      [ ] slack_bot.py
+      [ ] template.py
+   [ ] cloudwatch.py
+   [ ] features
+      [ ] aws_bot.feature
+      [ ] template.feature
+   [ ] java
+   [ ] reddit_rss_bot.py
+   [ ] slacktest.py
+[ ] stack
+[ ] terraform
+   [ ] Armor_test
+      [ ] app
+         [ ] index.php
+      [ ] app.zip
+      [ ] armor.config
+      [ ] armor_automation.pem
+      [ ] ebext.config
+      [ ] index.php
+      [ ] variables.tf
+   [ ] SecDevOps
+      [ ] terraform.tfstate
+      [ ] terraform.tfstate.backup
+      [ ] variables.tf
+   [ ] create_manifest.py
+   [ ] getTerraformExamples.sh
+   [ ] kali
+      [ ] kali.tf
+   [ ] lambda
+      [ ] lambda.tf
+      [ ] template.tf
+      [ ] variables.tf
+   [ ] linux
+      [ ] linux_targets.tf
+      [ ] variables.tf
+   [ ] network
+      [ ] network.tf
+      [ ] terraform.tfstate
+      [ ] terraform.tfstate.backup
+      [ ] variables.tf
+   [ ] shared
+      [ ] shell
+          [ ] InstallChocolatey.ps1
+          [ ] InstallPuppetFromMSI.ps1
+          [ ] PreparePuppetProvisioner.ps1
+          [ ] encode.rb
+          [ ] initialize_windows.ps1
+          [ ] install_choco_puppet.cmd
+          [ ] install_dependencies.cmd
+          [ ] install_python.ps1
+          [ ] logging.ps1
+          [ ] provisioning.ps1
+   [ ] slack-bot-lex-lambda
+      [ ] Makefile
+      [ ] README.md
+      [ ] src
+         [ ] dispatcher.js
+         [ ] dispatcher.test.js
+         [ ] index.js
+         [ ] package.json
+         [ ] slack.js
+         [ ] yarn.lock
+      [ ] start.ec2.zip
+      [ ] terraform
+          [ ] lambda.tf
+          [ ] lib
+             [ ] delete.unamed.js
+             [ ] start.py
+             [ ] stop.py
+          [ ] provider.tf
+          [ ] s3.tf
+          [ ] terraform.tfstate
+          [ ] terraform.tfstate.backup
+          [ ] terraform.tfvars
+          [ ] variables.tf
+          [ ] zip
+              [ ] delete.unamed.zip
+              [ ] start.ec2.py
+              [ ] start.ec2.zip
+              [ ] stop.ec2.py
+              [ ] stop.ec2.zip
+   [ ] windows
+       [ ] main.tf
+       [ ] variables.tf
+[ ] vagrant
+    [ ] cloud-init
+       [ ] enable_tty_for_all_linux.txt
+    [ ] shared
+    [ ] shell
+       [ ] openvpn_install.sh
+       [ ] openvpn_install_1204.sh
+       [ ] openvpn_install_1404.sh
+       [ ] openvpn_install_1604.sh
+    [ ] vagrant_customizations
+       [ ] dependency_manager.rb
+    [ ] vagrant_serial_provision.sh
+    [ ] vagrantfile
+    [ ] yaml
+        [ ] all.yaml
+        [ ] aws.yaml
+        [ ] kali.yaml
+        [ ] seclab.yaml
+        [ ] vagrant.openvpn.yaml
 
-- [x] Cliff-Notes:
-    - CTF Guide: https://trailofbits.github.io/ctf/
-    - ibr2's PWK Cheatsheet: https://github.com/ibr2/pwk-cheatsheet
-    - Metasploit initialization: <my doc link>
-    
-- [ ] Awesomeness: https://github.com/sindresorhus/awesome#security
-- [ ] Testing & TDD: 
-    - [ ] Gherkin / CICD:  https://blog.steamulo.com/improve-your-gitflow-with-docker-gitlab-ci-and-gherkin-60faddd39bb2
-    - [ ] Cucumber: http://www.wellho.net/mouth/4382_Second-step-Cucumber-and-Gherkin-beyond-Hello-World.html
-    - [ ] Terratest: https://github.com/gruntwork-io/terratest
-
-- [ ] AWS 
-    - [ ] CloudMapper - AWS visualization
-    - [ ] [AutoTagging - exists in tooling/aws_iam_policies](./tooling/aws_iam_policies/AutoTag.template) 
-        https://aws.amazon.com/blogs/security/how-to-automatically-tag-amazon-ec2-resources-in-response-to-api-events/
-    - [ ] Security Monkey:
-    - [ ] Serverless w/ Lambda and API Gateway: https://www.terraform.io/docs/providers/aws/guides/serverless-with-aws-lambda-and-api-gateway.html
-    - [ ] Create Lamba functions:
-        - [ ] shutting down instances
-            - https://github.com/nicholasjackson/slack-bot-lex-lambda/blob/master/terraform/lambda.tf
-        - [ ] Honey Lambda: https://github.com/0x4D31/honeyLambda   
-        - [ ] Setting up SecDevOps bots 
-            - [ ] slackbot 
-            - [ ] circleci bot / deployment bot 
-            - [ ] Serverless Slack Bot(s):
-                - https://chatbotslife.com/write-a-serverless-slack-chat-bot-using-aws-e2d2432c380e
-                - https://aws.amazon.com/blogs/aws/new-slack-integration-blueprints-for-aws-lambda/
-                - https://aws.amazon.com/blogs/devops/use-slack-chatops-to-deploy-your-code-how-to-integrate-your-pipeline-in-aws-codepipeline-with-your-slack-channel/
-     - [x] Cloud-Init:
-            - Rerun Cloud Init 
-                - Article: https://stackoverflow.com/questions/23151425/how-to-run-cloud-init-manually
-                - `/usr/bin/cloud-init -d init`
-            - Examples: https://cloudinit.readthedocs.io/en/latest/topics/examples.html
-            
-    - [x] Inspector Security Agents:
-            - [x] Simple cloud-init script to register the asset w/ the service:
-                `wget https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install -P /tmp/ && /tmp/install`    
-            - CICD deployment w/ boto triggered scans: https://www.we45.com/blog/how-to-amazon-inspector-with-terraform
-            - Supported Regions: https://docs.aws.amazon.com/inspector/latest/userguide/inspector_supported_os_regions.html
-            - Rules & Packages: 
-                - ARN Rules Index: https://docs.aws.amazon.com/inspector/latest/userguide/inspector_rules-arns.html
-                - Explained: https://docs.aws.amazon.com/inspector/latest/userguide/inspector_rule-packages.html
-
-- [ ] CICD:
-    - [x] CICD Pipeline:                    https://dev.to/kylegalbraith/creating-a-cicd-pipeline-with-a-git-repository-in-30-seconds-using-terraform-and-aws-2424
-    - [x] Rolling Deploys w/ Terraform:     https://robmorgan.id.au/posts/rolling-deploys-on-aws-using-terraform/
-    - [x] CICD w/ Docker:                   https://medium.com/soosap/continuous-deployment-w-docker-aws-and-circle-ci-82f4b14256cc
-    - [x] Inspec / packer / terraform:      https://github.com/jenkins201/packer-terraform-cicd-aws/blob/master/.circleci/config.yml
-    - [ ] Inspec checks from Terraform:     https://blog.chef.io/2018/05/23/automatically-generating-inspec-controls-from-terraform/
-    - [x] Armor Anywhere -  
-    - [ ] Monitoring:                       https://github.com/cloudposse/terraform-aws-cloudtrail-cloudwatch-alarms 
-    - [ ] Beanstalk:                        https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment
-    - [ ] Slack / AWS CICD Test instances   https://dev.solita.fi/2018/08/16/easy-test-deployments-round-two.html
-    - [ ] Automated Security Testing:       https://medium.com/@cossacklabs/automated-security-testing-56ee1253c1fd
-    - [ ] Packer AWS AMI import example:    https://github.com/codilime/security/tree/master/ec2-kali  
-    - [ ] BurpPro w/ Jenkins -              https://www.we45.com/blog/automating-burp-with-jenkins
-    - [ ] OWASP DevSecOps 
-        - DevSecOps Studio: https://www.owasp.org/index.php/OWASP_DevSecOps_Studio_Project
-        - https://www.teachera.io/devsecops-course/
-    
-
-- [ ] Offensive:
-  - [ ] PACU - Open-source AWS exploitation framework 
-    - https://github.com/RhinoSecurityLabs/pacu
-  - [ ] Rhino Security: Cloud Goat:
-        - https://github.com/RhinoSecurityLabs/cloudgoat
-        
-
-- [ ] Docker 
-    - [ ] Security Tools:
-        - https://techbeacon.com/10-top-open-source-tools-docker-security
-        - [ ] Amass (DNS recon) - https://github.com/OWASP/Amass
-        - [ ] Security Shephard (trainer) - `docker pull owasp/security-shepherd`
-        - [x] Dependency Checker - located in `tooling/scripts/docker_owasp-dependency-check.sh`
-    - 
-    - [ ]  Vuln Containers: 
-        - [x] Web Service - https://github.com/Cyrivs89/docker-dvws 
-        - [x] WebGoat: `docker run -p 8080:8080 -t webgoat/webgoat-8.0` 
-        - [x] Juice Shop - `docker run --rm -p 3000:3000 bkimminich/juice-shop`
-        - [ ] Metasploitable3 
-        - [ ] Master index of Vuln Application: `https://github.com/OWASP/OWASP-VWAD`
-        - [ ] NodeGoat (req. mongodb): https://github.com/OWASP/NodeGoat
-        - [ ] RailsGoat - `docker pull owasp/railsgoat`
-        - [ ] Damn Vulnerable Web App - `docker pull vulnerables/web-dvwa`
-        - [ ] Glue - `docker pull owasp/glue`
-        - [ ] Dependency Check - `docker pull owasp/dependency-check`
-        - [ ] SonarQube - `docker pull owasp/sonarqube`
-        - [ ] Vulnerable WordPress `docker run --name vulnerablewordpress -d -p 80:80 -p 3306:3306 wpscan/vulnerablewordpress`
-        - [ ] Metasploit Vulnerability Emulator 
-            - `docker run --rm -it \
-              -p 20:20 -p 21:21 -p 80:80 -p 443:443 -p 4848:4848 \
-              -p 6000:6000 -p 6060:6060 -p 7000:7000 -p 7181:7181 \
-              -p 7547:7547 -p 8000:8000 -p 8008:8008 -p 8020:8020 \
-              -p 8080:8080 -p 8400:8400 \
-              vulnerables/metasploit-vulnerability-emulator`
-            - `docker run --rm -it -p 20:20 -p 21:21 -p 80:80 -p 443:443 -p 4848:4848 -p 6000:6000 -p 6060:6060 -p 7000:7000 -p 7181:7181 -p 7547:7547 -p 8000:8000 -p 8008:8008 -p 8020:8020 -p 8081:8080 -p 8400:8400 vulnerables/metasploit-vulnerability-emulator`
-        - [ ] NetScaler Labs: https://github.com/MayankTahil/management-stack
-        
-- [ ] Inspection / Validation: 
-    - [ ] Inspec:
-        - [ ] Docker CIS Benchmark: https://github.com/dev-sec/cis-docker-benchmark 
-
-- [ ] Process Monitoring    
-    - [ ] Supervisord - https://serversforhackers.com/c/monitoring-processes-with-supervisord
-    
-- [ ] Technical references:
-    - [ ] Terraform Modules: https://docs.cloudposse.com/
-    - [ ] Red Team Environment w/ DNS: https://rastamouse.me/2017/08/automated-red-team-infrastructure-deployment-with-terraform---part-1/
-
-- [ ] Terraform 
-    - [ ] Terraform-compliance (BDD): https://github.com/eerkunt/terraform-compliance
-    - [ ] Kitchen Terraform: https://github.com/newcontext-oss/kitchen-terraform 
-    - [ ] Modules: 
-        - [x] Amazon Inspector (June 2018) 
-            - https://www.we45.com/blog/how-to-amazon-inspector-with-terraform
-        - [ ] Dow Jones Hammer: https://dowjones.github.io/hammer/deployment_terraform.html
-        - [ ] ELK: https://github.com/admintome/terraform-aws-elk
-    - [ ] Articles: 
-        - [ ] Terraform aws_spot_instance_request w/ schedule check automation: https://akomljen.com/terraform-and-aws-spot-instances/
-    
-- [ ] Honey Pots:
-    - [x] T-Pot 
-        - https://github.com/dtag-dev-sec/t-pot-autoinstall
-        - http://dtag-dev-sec.github.io/mediator/feature/2015/03/17/concept.html
-    - [ ] HoneyTrap Framework: http://docs.honeytrap.io/docs/home/ 
-    - [ ] Modern Honey Pot https://github.com/threatstream/mhn
-    - [ ] Cisco ASA: https://github.com/Cymmetria/ciscoasa_honeypot
-
-
-Tidbits: 
-- [ ] You can't implement a solution and trust that solution works w/o issue or further monitoring needed
-    - [ ] Equifax breach - configuration mgmt issues
-    - [ ] Terraform solution - does not delete all researches
-- [ ] Audits are a necessary evil and often very time consuming, yet returns pay dividends.  
-
-
-T-Pot:
-    - /opt/tpot/etc/tpot.yml
-    
-    
-    
-CTF:
-    - [ ] CTF tools: https://github.com/zardus/ctf-tools/blob/master/README.md
-    - [ ] DirBuster: web scraping tool for the server
-    
-    
-    
-    Decrypter challenge - license bypass
-        locate license check logic
-        locate where eax is written 0  
-        leverage hexeditor - update the values and rerun to bypass
-        IDA - 64bit free 
+170 directories, 696 files
