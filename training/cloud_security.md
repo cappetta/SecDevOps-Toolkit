@@ -5,6 +5,9 @@ analyze a cloud environment to determine its opportunities to improve.
 
 ## IAM
  - [ ] Principle Mapper: https://github.com/nccgroup/PMapper
+ - [ ] Disable / Delete Users:
+ - [ ] Access Key
+ - [ ] Roles:
 
 ## Analysis
  - [ ] CloudSploit: https://github.com/cloudsploit

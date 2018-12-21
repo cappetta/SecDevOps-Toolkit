@@ -26,6 +26,9 @@
     download: `https://nmap.org/ncrack/`
 ### binwalk:
     type: firmware analysis
+### mimikatz:
+    type:
+    github: Mimikatz 
 
 
 ## Import Data
