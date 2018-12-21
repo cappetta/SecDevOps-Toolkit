@@ -28,7 +28,10 @@
     type: firmware analysis
 ### mimikatz:
     type:
-    github: Mimikatz 
+    github: Mimikatz
+### MassScan / Zmap
+    type: Scanners
+    
 
 
 ## Import Data
