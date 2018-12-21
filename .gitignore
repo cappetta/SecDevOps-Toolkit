@@ -3,3 +3,6 @@
 aws.yaml
 .pem
 keys
+*.vagrant
+*.terraform
+*.tfstate*

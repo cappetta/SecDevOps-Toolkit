@@ -1,70 +1,43 @@
 # Overview
 
-As a SecDevOps Engineer, I need a toolkit of frameworks, bootstrap 
-solutions, vulnerable target manifests, and cliff-notes for research 
-to help 'sharpen the axe'.
+As a SecDevOps Engineer, I recognize the enormous value in an organized
+ toolbox full of automation utilities, cliff notes, & reference 
+ materials which I can review to enhance any project I'm working on.
 
-As a Cyber Security Expert, I constantly research, explore, and 
-utilize various technologies to improve my capabilities, redefine
-processes, and 'sharpen my axe' across all operating systems, 
-technolgies, domains, languages, services, and protocols.
-  
-As a Cloud Architect, I recognize the enormous business value that rapid 
-prototying, automated orchestration, & continuous delivery provide to a 
-organization. 
+Looking at the bigger picture, there's a strong need to collaborate 
+across the industry w/ open-source materials that other's can leverage
+to expand both conceptual and working knowledge.
 
-This project is an uncoordinated set of efforts from multiple sources, 
-where possible I've referenced the original source while consolidating 
-things into a single repository.  If I missed a reference to a source, 
-open an issue & I'll gladly provide credit toward the original source. 
+This repo provides just that.
 
-The goal of this toolbox is to provide any individual with a framework
-to get started implementing the use of these tools for use-cases which
-benefit them.
- 
+The goal is to outline a project agnostic automation tooling that 
+engineers can leverage to quickly create, test, and deploy to
+both simple & complex application environments. 
+
+From a **Security Perspective**, the need to act quickly to changing scenarios 
+is also very important.  From a time/effort perspective, there is a maximum
+benefit being able to automate an environment and add a step to a startup
+script to eliminate a newly released patch for an applications 
+vulnerability.  
+
+From a **Documentation Perspective**, the centralization of cliff-notes helps outline the common configuration 
+& usage of the tools.  If you've used one of them before then you will 
+quickly recognize how this can control single asset use-cases as well as
+multi-asset
+
 # Features
-The tools below require you download/install them on your target system(s)
-before using any of the examples in the folders.  
+The tools directly below require you install them on your target system(s)
+before using any of the examples in the vagrant/terraform folders.
 
 ## Wiki Content:
- The wiki contains key information outlining general usage of the tools.  
- The tooling folder contains a few other tools not outlined below and 
- the supporting wiki sit ealso 
+ The wiki contains key information outlining general usage of the tools:
  
  https://github.com/cappetta/SecDevOps-Toolkit/wiki
  
     - Git Secrets - eliminate sensitive data from being committed
     - AWS Setup - obtaining api keys and setting up a cli
     - terraform -  general usage & argument syntax
-    - vagrant - create & share a
-    - puppet/ansible - configuraction mgmt tooling
-    - docker -
-    - cloud-int
-    
-## Git-Secrets
-    
-If you read-this you need to take action right now & execute these steps
-on any system you have work/develop on.  Human-Error will leak AWS keys 
-and must run this in every on any system which might have a repository 
-you want protected.
-
-    1) Make a directory for the template: mkdir ~/.git-template
-
-    2) Install the hooks in the template directory: git secrets --install ~/.git-template
-
-    3) Tell git to use it: git config --global init.templateDir ’~/.git-template’
-
-    4) Execute Git-Secrets to install across all repos 
-        via: tooling/scripts/update_all_repos.sh
-        
-    Big Thanks to Nate Jacobs @sparkbox for outlining this solution in 
-    his blog: https://seesparkbox.com/foundry/git_secrets
-    
-    original source: `https://gist.github.com/iAmNathanJ/0ae03dcb08ba222d36346b138e83bfdf`
-
-Hands-down the most important step you can do right now if you use
-AWS, take the moment to [x] the box off your own systems now...
-
+    - vagrant - outlining
     
 ## Vagrant 
     Use-Case: Create & Provision Infrastructure

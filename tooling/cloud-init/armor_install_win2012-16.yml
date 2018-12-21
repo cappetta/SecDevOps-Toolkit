@@ -1,0 +1,5 @@
+<script>
+Invoke-WebRequest https://get.core.armor.com/latest/armor-setup.exe -outfile $home\Desktop\armor-setup.exe
+cd $home\Desktop; .\armor-setup.exe
+# todo: armor_register windows install XxXxX-xXxXx-XxXxX-xXxXx-XxXxX
+</script>

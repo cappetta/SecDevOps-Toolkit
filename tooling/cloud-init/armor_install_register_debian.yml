@@ -1,0 +1,4 @@
+runcmd:
+  - 'yum install https://get.core.armor.com/latest/armor-agent.rpm'
+  - '/opt/armor/armor register --license=XxXxX-xXxXx-XxXxX-xXxXx-XxXxX'
+  - 'service armor-agent start'

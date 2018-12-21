@@ -1,0 +1,228 @@
+# vagrant.yaml
+# @author: cappetta
+# purpose: Vagrant leverages yaml to define instances, initialization, provisioning dependencies, & files/folders
+---
+- name:       win7-test
+  ami:        'ami-d7d21dc1'
+  user: "vagrant"
+  region:     'us-east-1'
+  isWindows:  True
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/windows_initialize.txt'
+#    secgroup_name: 'xxxxxx'
+  folders: # additional folders to sync up
+    - main_folder:
+      local:    'xxxxxxgit/qa-scripts/vagrant'
+      virtual:  'C:\\Users\vagrant\Desktop\files'
+  initScript:
+    - install_puppet:
+      init: "./shared/shell/main.cmd"
+  # This shell provisioner installs chocolatey, ruby, and puppet. Also runs librarian-puppet.
+
+- name:       win2016_base
+  ami:        'ami-b06249a7'
+  user: admin
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+
+- name:       win2016_nano
+  ami:        'ami-6e260e79'
+  user: admin
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+
+- name:       win2016_docker
+  ami:        'ami-73577c64'
+  user: admin
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+
+- name:       win2016_sql
+  ami:        'ami-28b9913f'
+  user: admin
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+
+- name: windows2003R2wSQLServer2005
+  ami: ami-29ba5a3f
+  user: 
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+
+- name:       centos_scanner
+  ami:        'ami-6d1c2007'
+  user: centos
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.medium"
+  userData: 'cloud-init/scanner_initialize.txt'
+
+- name: ubuntu1604
+  ami: 	ami-3267bb24
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  user: "ubuntu"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: ubuntu1404
+  ami: "ami-a95044be"
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "m1.small"
+  user: "ubuntu"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: ubuntu1204
+  ami: "ami-089b441e"
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "m1.small"
+  user: "ubuntu"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: centos7
+  ami: "ami-6d1c2007"
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small" 
+  user: "centos"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: debian8
+  ami: "ami-cb4b94dd"
+  user: admin
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: suse12
+  ami: ami-48b63120
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "m1.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: suse11
+  ami: ami-7f2e6015
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "m1.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: amazon_ecs_ami
+  ami: ami-92659c84
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: amazon_hvm_ami
+  ami: ami-0b33d91d
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: rhel7
+  ami: 	ami-a8d369c0
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: rhel6.5
+  ami:  ami-1643ff7e
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "m1.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: rhel5
+  ami: ami-4c6ad824
+  user: root
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "m1.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: kali
+  ami:	ami-5008d946
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: coreos
+  ami: ami-f29843e4
+  user: core
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
+
+- name: opensuse42.2
+  ami: ami-eada30fc
+  user: ec2-user
+  region:     'us-east-1'
+  subnet_id:   'subnet-xxxxxx'
+  secgroup_name: 'sg-xxxxxx'
+  aws_keypair_name: "xxxxxx"
+  type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
