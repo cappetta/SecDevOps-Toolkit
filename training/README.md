@@ -6,3 +6,4 @@ free resources to help the security professional.
 
 
  - http://www.webscantest.com/
+ - Double Pivoting: https://pentest.blog/explore-hidden-networks-with-double-pivoting/
