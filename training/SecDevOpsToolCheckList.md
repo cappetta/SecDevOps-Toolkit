@@ -136,15 +136,13 @@ https://help.github.com/articles/removing-sensitive-data-from-a-repository/
     - [ ] Modern Honey Pot https://github.com/threatstream/mhn
     - [ ] Cisco ASA: https://github.com/Cymmetria/ciscoasa_honeypot
 
-
-Tidbits: 
-- [ ] You can't implement a solution and trust that solution works w/o issue or further monitoring needed
-    - [ ] Equifax breach - configuration mgmt issues
-    - [ ] Terraform solution - does not delete all researches
-- [ ] Audits are a necessary evil and often very time consuming, yet returns pay dividends.  
+https://www.abatchy.com/2017/02/oscp-like-vulnhub-vms
 
 
-T-Pot:
+OpenSource Intelligence; 
+
+HoneyPot Research: 
+    T-Pot:
     - /opt/tpot/etc/tpot.yml
     
     
