@@ -1,9 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
 aws.yaml
-*.pem
+.pem
 keys
-fd_env
 *.vagrant
 *.terraform
 *.tfstate*
