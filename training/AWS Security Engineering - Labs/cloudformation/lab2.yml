@@ -1,0 +1,541 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Security Engineering on AWS - Lab 1; AWS Systems Manager and Inspector
+Parameters:
+  VPCCIDR:
+    Description: CIDR Block for VPC
+    Type: String
+    Default: 10.96.10.0/16
+    AllowedValues: [10.96.10.0/16]
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Keyname for the keypair that Qwiklab will use to launch EC2 instances
+    #Default: 'VA-Dev_key'
+  PUBSUBNET:
+    Description: Public Subnet
+    Type: String
+    Default: 10.96.10.0/24
+    AllowedValues: [10.96.10.0/24]
+  S3PathPrefix:
+    Type: String
+    Description: 'The path prefix where lab resources are stored (Leading and trailing slash required!)'
+    Default: 'courses/ILT-TF-200-SISECO/v2.3.0/lab-2-systemsmanager'
+    #Default: 's3-us-west-2.amazonaws.com/patfitz/SecEng-Dev'
+  QwiklabLocale:
+    Default: en
+    Type: String
+    Description: The locale of the student will be passed in to this parameter via the Qwiklab platform via the students browser
+Mappings:
+  AmazonLinuxAMI:
+    ap-northeast-1:
+      AMI: ami-f80e0596
+    ap-northeast-2:
+      AMI: ami-6598510b
+    ap-southeast-1:
+      AMI: ami-c9b572aa
+    ap-southeast-2:
+      AMI: ami-f2210191
+    eu-central-1:
+      AMI: ami-e2df388d
+    eu-west-1:
+      AMI: ami-31328842
+    sa-east-1:
+      AMI: ami-1e159872
+    us-east-1:
+      AMI: ami-08111162
+    us-east-2:
+      AMI: ami-06547163
+    us-west-1:
+      AMI: ami-1b0f7d7b
+    us-west-2:
+      AMI: ami-f0091d91
+  UbunutuLinuxAMI:
+    ap-northeast-1:
+      AMI: ami-18a8d1f5
+    ap-northeast-2:
+      AMI: ami-0cffb4e3f8f2c7ca2
+    ap-southeast-1:
+      AMI: ami-02717f13071669929
+    ap-southeast-2:
+      AMI: ami-3b288859
+    eu-central-1:
+      AMI: ami-f3bcb218
+    eu-west-1:
+      AMI: ami-0bd5ae06b6779872a
+    sa-east-1:
+      AMI: ami-0ba619c9d7a85181f
+    us-east-1:
+      AMI: ami-920b10ed
+    us-east-2:
+      AMI: ami-03bd56e7bb2f24c5d
+    us-west-1:
+      AMI: ami-f36b8490
+    us-west-2:
+      AMI: ami-349fb84c
+Resources:
+  # IAM
+  AutomateRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: 'Allow'
+          Principal:
+            Service: ['ec2.amazonaws.com',
+                      'ssm.amazonaws.com']
+          Action: ['sts:AssumeRole']
+      Path: '/'
+      Policies:
+      - PolicyName: AmazonSSMAutomationRole
+        PolicyDocument:
+          Statement:
+          - Effect: 'Allow'
+            Action: [ 'ec2:CreateImage',
+                      'ec2:CopyImage',
+                      'ec2:DeregisterImage',
+                      'ec2:DescribeImages',
+                      'ec2:DeleteSnapshot',
+                      'ec2:StartInstances',
+                      'ec2:RunInstances',
+                      'ec2:StopInstances',
+                      'ec2:TerminateInstances',
+                      'ec2:DescribeInstanceStatus',
+                      'ec2:CreateTags',
+                      'ec2:DeleteTags',
+                      'ec2:DescribeTags',
+                      'iam:PassRole',
+                      'cloudformation:CreateStack',
+                      'cloudformation:DescribeStackEvents',
+                      'cloudformation:DescribeStacks',
+                      'cloudformation:UpdateStack',
+                      'cloudformation:DeleteStack',
+                      'ssm:*' ]
+            Resource: '*'
+          - Effect: 'Allow'
+            Action: [ 'sns:Publish' ]
+            Resource: 'arn:aws:sns:*:*:Automation*'
+          - Effect: 'Allow'
+            Action: [ 'lambda:InvokeFunction']
+            Resource: 'arn:aws:lambda:*:*:function:Automation*'
+  CommandHostInstProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+      - !Ref CommandHostRole
+      InstanceProfileName: CommandHostInstanceProfile
+  CommandHostRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: 'Allow'
+          Principal:
+            Service: ['ec2.amazonaws.com']
+          Action: ['sts:AssumeRole']
+      Path: '/'
+      Policies:
+      - PolicyName: CommandHostRole
+        PolicyDocument:
+          Statement:
+          - Effect:  'Allow'
+            Action: [ 'ssm:DescribeAssociation',
+                      'ssm:GetDeployablePatchSnapshotForInstance',
+                      'ssm:GetDocument',
+                      'ssm:GetManifest',
+                      'ssm:GetParameters',
+                      'ssm:ListAssociations',
+                      'ssm:ListInstanceAssociations',
+                      'ssm:PutInventory',
+                      'ssm:PutComplianceItems',
+                      'ssm:PutConfigurePackageResult',
+                      'ssm:UpdateAssociationStatus',
+                      'ssm:UpdateInstanceAssociationStatus',
+                      'ssm:UpdateInstanceInformation',
+                      'ec2:DescribeInstanceStatus',
+                      'ec2messages:AcknowledgeMessage',
+                      'ec2messages:DeleteMessage',
+                      'ec2messages:FailMessage',
+                      'ec2messages:GetEndpoint',
+                      'ec2messages:GetMessages',
+                      'ec2messages:SendReply',
+                      'cloudwatch:PutMetricData',
+                      'ds:CreateComputer',
+                      'ds:DescribeDirectories',
+                      'logs:CreateLogGroup',
+                      'logs:CreateLogStream',
+                      'logs:DescribeLogGroups',
+                      'logs:DescribeLogStreams',
+                      'logs:PutLogEvents',
+                      's3:PutObject',
+                      's3:GetObject',
+                      's3:AbortMultipartUpload',
+                      's3:ListMultipartUploadParts',
+                      's3:ListBucket',
+                      's3:ListBucketMultipartUploads',
+                      'ssm:List*',
+                      'ssm:Get*',
+                      'ssm:Desc*',
+                      'ssm:SendCommand',
+                      'ssm:StartAutomationExecution',
+                      'ssm:ExecuteAutomation',
+                      'ssm:RunCommand',
+                      'ssm:*',
+                      'ec2:*',
+                      'inspector:*',
+                      'iam:CreateServiceLinkedRole',
+                      'cloudformation:List*',
+                      'cloudformation:Get*',
+                      'cloudformation:Desc*',
+                      'cloudformation:DeleteStack',
+                      'cloudformation:CreateStack',
+                      'lambda:*',
+                      'iam:CreateRole',
+                      'iam:PutRolePolicy',
+                      'iam:Get*',
+                      'iam:List*',
+                      'iam:Desc*',
+                      'iam:PassRole',
+                      'iam:DeleteRolePolicy',
+                      'iam:DeleteRole' ]
+            Resource: '*'
+  EC2SSMInstProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+      - !Ref EC2SSMRole
+      InstanceProfileName: EC2SSMInstanceProfile
+  EC2SSMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: 'Allow'
+          Principal:
+            Service: ['ec2.amazonaws.com']
+          Action: ['sts:AssumeRole']
+      Path: '/'
+      Policies:
+      - PolicyName: AmazonEC2SSMRole
+        PolicyDocument:
+          Statement:
+          - Effect:  'Allow'
+            Action: [ 'ssm:DescribeAssociation',
+                      'ssm:GetDeployablePatchSnapshotForInstance',
+                      'ssm:GetDocument',
+                      'ssm:GetManifest',
+                      'ssm:GetParameters',
+                      'ssm:ListAssociations',
+                      'ssm:ListInstanceAssociations',
+                      'ssm:PutInventory',
+                      'ssm:PutComplianceItems',
+                      'ssm:PutConfigurePackageResult',
+                      'ssm:UpdateAssociationStatus',
+                      'ssm:UpdateInstanceAssociationStatus',
+                      'ssm:UpdateInstanceInformation',
+                      'ec2:DescribeInstanceStatus',
+                      'ec2messages:AcknowledgeMessage',
+                      'ec2messages:DeleteMessage',
+                      'ec2messages:FailMessage',
+                      'ec2messages:GetEndpoint',
+                      'ec2messages:GetMessages',
+                      'ec2messages:SendReply',
+                      'cloudwatch:PutMetricData',
+                      'ds:CreateComputer',
+                      'ds:DescribeDirectories',
+                      'logs:CreateLogGroup',
+                      'logs:CreateLogStream',
+                      'logs:DescribeLogGroups',
+                      'logs:DescribeLogStreams',
+                      'logs:PutLogEvents',
+                      's3:PutObject',
+                      's3:GetObject',
+                      's3:AbortMultipartUpload',
+                      's3:ListMultipartUploadParts',
+                      's3:ListBucket',
+                      's3:ListBucketMultipartUploads' ]
+            Resource: '*'
+  # logging Bucket
+  LogBucket:
+    Type: AWS::S3::Bucket
+      #  Properties:
+    #AccessControl: String
+    #  BucketName: !Sub LoggingBucket- ${AWS::StackName}
+
+  # Networking
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: VPC
+        Value: SecEng
+      - Key: Name
+        Value: CF Lab Env
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DependsOn:
+    - VPC
+    Properties:
+      Tags:
+      - Key: Name
+        Value: SecEng VPC IGW
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn:
+    - VPC
+    - InternetGateway
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    DependsOn: VPC
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PUBSUBNET
+      MapPublicIpOnLaunch : true
+      AvailabilityZone: !Select
+      - '0'
+      - !GetAZs ''
+      Tags:
+      - Key: Name
+        Value: Public Subnet
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: AttachGateway
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: Public Routing Table
+  PublicRouteIGW:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicRouteTableAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: PublicRouteIGW
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for App Tier and http access
+      VpcId:
+        !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: Ski Free App Tier SG
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: '0'
+        ToPort: '65535'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: udp
+        FromPort: '0'
+        ToPort: '65535'
+        CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        CidrIp: 0.0.0.0/0
+  CommandHost:
+    Type: AWS::EC2::Instance
+    DependsOn:
+    - PublicSubnet
+    - VPC
+    - AppSecurityGroup
+    #  CreationPolicy:
+    #    ResourceSignal:
+    #      Count: '1'
+    #      Timeout: PT25M
+    Properties:
+      IamInstanceProfile: !Ref CommandHostInstProfile
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap [ AmazonLinuxAMI, !Ref "AWS::Region", AMI ]
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - DeviceIndex: "0"
+        AssociatePublicIpAddress: true
+        SubnetId: !Ref PublicSubnet
+        GroupSet:
+        - !Ref AppSecurityGroup
+      Tags:
+      - Key: 'Name'
+        Value: 'CommandHost'
+      - Key: 'Env'
+        Value: 'SecEng - Lab 1'
+      - Key: 'SecurityScan'
+        Value: 'false'
+      - Key: 'Patch Group'
+        Value: 'Critical'
+      - Key: 'OS Group'
+        Value: 'AmazonLinux'
+      UserData:
+        'Fn::Base64':
+          !Sub |
+          #!/bin/bash -ex
+
+          yum install -y aws-cli &&
+
+          mkdir /home/ec2-user/.aws &&
+          echo "[default]" > /home/ec2-user/.aws/config &&
+          echo "region = ${AWS::Region}" >> /home/ec2-user/.aws/config &&
+
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource CommandHost --region ${AWS::Region}
+  SkiFreeServer:
+    Type: AWS::EC2::Instance
+    DependsOn:
+    - PublicSubnet
+    - VPC
+    - AppSecurityGroup
+    #CreationPolicy:
+    #  ResourceSignal:
+    #    Count: '1'
+    #    Timeout: PT25M
+    Properties:
+      IamInstanceProfile: !Ref EC2SSMInstProfile
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap [ AmazonLinuxAMI, !Ref "AWS::Region", AMI ]
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - DeviceIndex: "0"
+        AssociatePublicIpAddress: true
+        SubnetId: !Ref PublicSubnet
+        GroupSet:
+        - !Ref AppSecurityGroup
+      Tags:
+      - Key: 'Name'
+        Value: 'SkiFree Server'
+      - Key: 'Env'
+        Value: 'SecEng - Lab 1'
+      - Key: 'SecurityScan'
+        Value: 'true'
+      - Key: 'Patch Group'
+        Value: 'Amazon'
+      - Key: 'OS Group'
+        Value: 'AmazonLinux'
+      UserData:
+        'Fn::Base64':
+          !Sub |
+          #!/bin/bash -ex
+
+          # Install
+          yum install python httpd awscli unzip awslogs -y &&
+
+          # Install ssm agent
+          yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm &&
+          start amazon-ssm-agent &&
+
+          mkdir /home/ec2-user/.aws &&
+          echo "[default]" > /home/ec2-user/.aws/config &&
+          echo "region = ${AWS::Region}" >> /home/ec2-user/.aws/config &&
+
+          wget -O ~/CWL-Config.txt https://${AWS::Region}-tcprod.s3.amazonaws.com/courses/ILT-TF-200-SISECO/v2.3.0/lab-2-systemsmanager/scripts/CWL-Config-amz.txt &&
+          cat ~/CWL-Config.txt >> /etc/awslogs/awslogs.conf  &&
+
+          service awslogs start &&
+
+          wget -O  ~/skifree.zip https://${AWS::Region}-tcprod.s3.amazonaws.com/courses/ILT-TF-200-SISECO/v2.3.0/lab-2-systemsmanager/scripts/skifree.js-master.zip &&
+          unzip -d /var/www/html/ ~/skifree.zip &&
+          mv /var/www/html/skifree.js-master/* /var/www/html/ &&
+
+          service httpd start
+
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource SkiFreeServer --region ${AWS::Region}
+  AlgesServer:
+    Type: AWS::EC2::Instance
+    DependsOn:
+    - PublicSubnet
+    - VPC
+    - AppSecurityGroup
+    #CreationPolicy:
+    #  ResourceSignal:
+    #    Count: '1'
+    #    Timeout: PT25M
+    Properties:
+      IamInstanceProfile: !Ref EC2SSMInstProfile
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap [ UbunutuLinuxAMI, !Ref "AWS::Region", AMI ]
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - DeviceIndex: "0"
+        AssociatePublicIpAddress: true
+        SubnetId: !Ref PublicSubnet
+        GroupSet:
+        - !Ref AppSecurityGroup
+      Tags:
+      - Key: 'Name'
+        Value: 'Alges Server'
+      - Key: 'Env'
+        Value: 'SecEng - Lab 1'
+      - Key: 'SecurityScan'
+        Value: 'true'
+      - Key: 'Patch Group'
+        Value: 'Ubuntu'
+      - Key: 'OS Group'
+        Value: 'UbuntuLinux'
+      UserData:
+        'Fn::Base64':
+          !Sub |
+          #!/bin/bash -ex
+
+          # Updates & Install
+          apt-get update -y &&
+          apt-get install -y apache2 python unzip awscli python-setuptools python-pip &&
+
+          #snap start amazon-ssm-agent &&
+
+          # Install CFN Bootstrap Tools
+          pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz &&
+
+          #Setup Home Dir
+          mkdir /home/ubuntu/.aws &&
+          echo "[default]" > /home/ubuntu/.aws/config &&
+          echo "region = ${AWS::Region}" >> /home/ubuntu/.aws/config  &&
+
+          # installing the CWL Agent and Setting up config
+          curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O  &&
+          wget -O ~/CWL-Config-deb.txt https://${AWS::Region}-tcprod.s3.amazonaws.com/courses/ILT-TF-200-SISECO/v2.3.0/lab-2-systemsmanager/scripts/CWL-Config-deb.txt &&
+          mkdir -p /var/etc/awslogs/ &&
+          cat ~/CWL-Config-deb.txt >> /var/etc/awslogs/awslogs.conf &&
+          python ./awslogs-agent-setup.py --region ${AWS::Region} --non-interactive --configfile=/var/etc/awslogs/awslogs.conf &&
+
+          # Start the deamon to send logs starting at the begining of file
+          service awslogs start &&
+
+          # Install the Alge Game Code
+          wget -O  ~/AlgesEscapade.zip https://${AWS::Region}-tcprod.s3.amazonaws.com/courses/ILT-TF-200-SISECO/v2.3.0/lab-2-systemsmanager/scripts/AlgesEscapade.zip &&
+          unzip -d /var/www/html/ ~/AlgesEscapade.zip &&
+          mv /var/www/html/game-off-2012-master/* /var/www/html/ &&
+          mv /var/www/html/index.htm /var/www/html/index.html &&
+
+          # Start Apache
+          service apache2 start
+
+          # Telling CFN finished installing the code
+          /usr/local/bin/cfn-signal --exit-code $? --stack ${AWS::StackName} --resource AlgesServer --region ${AWS::Region}
+Outputs:
+  LogBucket:
+    Value: !Ref LogBucket
+    Description: 'S3 Bucket to log command outputs from the Run Command to'
+  CommandHost:
+    Value: !GetAtt  CommandHost.PublicIp
+    Description: 'Public IP of the CommandHost'

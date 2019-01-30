@@ -1,0 +1,284 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Security Engineering Lab Logs.  EC2 log source.  Firehose DeliveryStream to S3 Destination.  AWS Glue service role.
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+
+Mappings:
+  RegionMap:
+    "ap-northeast-1":
+      "AMI": "ami-cbf90ecb"
+    "ap-northeast-2":
+      "AMI": "ami-249b554a"
+    "ap-southeast-1":
+      "AMI": "ami-68d8e93a"
+    "ap-southeast-2":
+      "AMI": "ami-fd9cecc7"
+    "eu-central-1":
+      "AMI": "ami-a8221fb5"
+    "eu-west-1":
+      "AMI": "ami-a10897d6"
+    "sa-east-1":
+      "AMI": "ami-b52890a8"
+    "us-east-1":
+      "AMI": "ami-97785bed"
+    "us-east-2":
+      "AMI": "ami-f63b1193"
+    "us-west-1":
+      "AMI": "ami-d114f295"
+    "us-west-2":
+      "AMI": "ami-e7527ed7"
+
+Resources:
+  LogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: LogRolePolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - firehose:DeleteDeliveryStream
+            - firehose:PutRecord
+            - firehose:PutRecordBatch
+            - firehose:UpdateDestination
+            Resource:
+            - arn:aws:firehose:*:*:*
+  LogRoleInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: LogRole
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access via port 80 and SSH access via port 22
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        CidrIp: 0.0.0.0/0
+  WebServerHost:
+    Type: AWS::EC2::Instance
+    Metadata:
+      Comment: Install a simple PHP application
+      AWS::CloudFormation::Init:
+        configSets:
+          default:
+          - "installPHP"
+          - "configureLog"
+        installPHP:
+          packages:
+            yum:
+              httpd: []
+              php: []
+          files:
+            "/var/www/html/index.php":
+              content: !Sub |
+                <?php
+                echo '<h1>Security Engineering on AWS sample PHP application</h1>';
+                ?>
+              mode: '000644'
+              owner: apache
+              group: apache
+            "/etc/cfn/cfn-hup.conf":
+              content: !Sub |
+                [main]
+                stack= ${AWS::StackId}
+                region=${AWS::Region}
+              mode: "000400"
+              owner: "root"
+              group: "root"
+            "/etc/cfn/hooks.d/cfn-auto-reloader.conf":
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.WebServerHost.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource WebServerHost --region ${AWS::Region}
+              mode: "000400"
+              owner: "root"
+              group: "root"
+          services:
+            sysvinit:
+              httpd:
+                enabled: 'true'
+                ensureRunning: 'true'
+        configureLog:
+          commands:
+            01chmod:
+              command: "chmod 755 /var/log/httpd"
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT5M
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+        - RegionMap
+        - Ref: AWS::Region
+        - AMI
+      KeyName:
+        Ref: KeyName
+      InstanceType: t2.micro
+      SecurityGroups:
+      - Ref: WebServerSecurityGroup
+      IamInstanceProfile:
+        Ref: LogRoleInstanceProfile
+      UserData:
+        "Fn::Base64":
+          !Sub |
+          #!/bin/bash -xe
+          # Get the latest CloudFormation package
+          yum update -y aws-cfn-bootstrap
+          # Start cfn-init
+          /opt/aws/bin/cfn-init -s ${AWS::StackId} -r WebServerHost --region ${AWS::Region} || error_exit 'Failed to run cfn-init'
+          # Start up the cfn-hup daemon to listen for changes to the EC2 instance metadata
+          /opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'
+          # All done so signal success
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource WebServerHost --region ${AWS::Region}
+  deliveryStream:
+    DependsOn:
+    - deliveryPolicy
+    Type: 'AWS::KinesisFirehose::DeliveryStream'
+    Properties:
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !Join
+        - ''
+        - - 'arn:aws:s3:::'
+          - !Ref s3Bucket
+        BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '5'
+        CompressionFormat: UNCOMPRESSED
+        Prefix: logs/
+        RoleARN: !GetAtt deliveryRole.Arn
+  s3Bucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Delete
+  deliveryRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Sid: ''
+          Effect: Allow
+          Principal:
+            Service: firehose.amazonaws.com
+          Action: 'sts:AssumeRole'
+          Condition:
+            StringEquals:
+              'sts:ExternalId': !Ref 'AWS::AccountId'
+  deliveryPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: firehose_delivery_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - 's3:AbortMultipartUpload'
+          - 's3:GetBucketLocation'
+          - 's3:GetObject'
+          - 's3:ListBucket'
+          - 's3:ListBucketMultipartUploads'
+          - 's3:PutObject'
+          Resource:
+          - !Join
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref s3Bucket
+          - !Join
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref s3Bucket
+              - '*'
+      Roles:
+      - !Ref deliveryRole
+  # GlueServiceRole & GlueServiceRolePolicyExtra used by AWS Glue via console
+  GlueServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - glue.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      Path: "/"
+  GlueServiceRolePolicyExtra:
+    DependsOn:
+    - GlueServiceRole
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: "Allow"
+          Action:
+          - "s3:GetObject"
+          - "s3:PutObject"
+          Resource:
+          - !Join
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref s3Bucket
+          - !Join
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref s3Bucket
+              - '*'
+      PolicyName: GlueServiceRolePolicy
+      Roles:
+      - !Ref GlueServiceRole
+
+Outputs:
+  InstanceId:
+    Description: The instance ID of the web server
+    Value:
+      Ref: WebServerHost
+  WebsiteURL:
+    Value:
+      !Sub 'http://${WebServerHost.PublicDnsName}'
+    Description: URL for newly created LAMP stack
+  PublicIP:
+    Description: Public IP address of the web server
+    Value:
+      !GetAtt WebServerHost.PublicIp
+  DeliveryStream:
+    Description: The ID of the Kinesis Firehose
+    Value:
+      Ref: deliveryStream
+  S3Bucket:
+    Description: The name of the log S3 bucket
+    Value:
+      Ref: s3Bucket
+  Region:
+    Description: The AWS region in which the lab is running
+    Value:
+      !Sub ${AWS::Region}

@@ -1,0 +1,544 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Security Architecting on AWS - Lab 4
+Parameters:
+  KeyName:
+    Type: String
+    Description: Keyname for the keypair that Qwiklab will use to launch EC2 instances
+    Default: default-lab-key
+  AWSAmiId:
+    Description: The name of the Windows AMI to find based on search
+    Type: String
+    Default: 'x86_64,Windows_Server-2012-R2_RTM-English-64Bit-Base'
+  DomainAdminUser:
+    Description: >-
+      User name for the account that will be added as Domain Administrator. This
+      is separate from the default "Administrator" account
+    Type: String
+    Default: StackAdmin
+  AdminPassword:
+    NoEcho: 'true'
+    Description: The Windows administrator account password
+    Type: String
+    MinLength: '8'
+    MaxLength: '41'
+    Default: '12#soupBUBBLEblue'
+  DomainDNSName:
+    Description: Fully qualified domain name (FQDN) of the forest root domain
+    Type: String
+    Default: mydomain.local
+  DomainNetBiosName:
+    Description: Netbios name for the domain
+    Type: String
+    Default: mydomain
+Resources:
+  RootRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - 'sts:AssumeRole'
+      Path: /
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+  RootInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+      - !Ref RootRole
+  DomainControllerWaitCondition:
+    Type: 'AWS::CloudFormation::WaitCondition'
+    DependsOn: DC1
+    Properties:
+      Handle: !Ref DomainControllerWaitHandle
+      Timeout: '3600'
+  DomainControllerWaitHandle:
+    Type: 'AWS::CloudFormation::WaitConditionHandle'
+  DC1:
+    Type: 'AWS::EC2::Instance'
+    DependsOn: NATRoute
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          config:
+          - setup
+          - rename
+          - installADDS
+          - finalize
+        setup:
+          files:
+            'c:\cfn\cfn-hup.conf':
+              content: !Join
+              - ''
+              - - |
+                  [main]
+                  - stack=
+                  - !Ref 'AWS::StackName'
+                  - |+
+
+                  - region=
+                  - !Ref 'AWS::Region'
+                  - |+
+
+            'c:\cfn\hooks.d\cfn-auto-reloader.conf':
+              content: !Join
+              - ''
+              - - |
+                  [cfn-auto-reloader-hook]
+                  - |
+                  triggers=post.update
+                  - |
+                  path=Resources.DC1.Metadata.AWS::CloudFormation::Init
+                  - 'action=cfn-init.exe -v -c config -s '
+                  - !Ref 'AWS::StackId'
+                  - ' -r DC1'
+                  - ' --region '
+                  - !Ref 'AWS::Region'
+                  - |+
+
+            'c:\cfn\scripts\Set-StaticIP.ps1':
+              content: !Join
+              - ''
+              - - $netip = Get-NetIPConfiguration;
+                - >-
+                  $ipconfig = Get-NetIPAddress | ?{$_.IpAddress -eq
+                  $netip.IPv4Address.IpAddress};
+                - Get-NetAdapter | Set-NetIPInterface -DHCP Disabled;
+                - >-
+                  Get-NetAdapter | New-NetIPAddress -AddressFamily IPv4
+                  -IPAddress $netip.IPv4Address.IpAddress -PrefixLength
+                  $ipconfig.PrefixLength -DefaultGateway
+                  $netip.IPv4DefaultGateway.NextHop;
+                - >-
+                  Get-NetAdapter | Set-DnsClientServerAddress -ServerAddresses
+                  $netip.DNSServer.ServerAddresses;
+                - |+
+
+          services:
+            windows:
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files:
+                - 'c:\cfn\cfn-hup.conf'
+                - 'c:\cfn\hooks.d\cfn-auto-reloader.conf'
+          commands:
+            a-disable-win-fw:
+              command: !Join
+              - ''
+              - - >-
+                  powershell.exe -Command "Get-NetFirewallProfile |
+                  Set-NetFirewallProfile -Enabled False
+              waitAfterCompletion: '0'
+        rename:
+          commands:
+            a-set-static-ip:
+              command: !Join
+              - ''
+              - - >-
+                  powershell.exe -ExecutionPolicy RemoteSigned -Command
+                  c:\cfn\scripts\Set-StaticIP.ps1
+              waitAfterCompletion: '15'
+            b-run-powershell-RenameComputer-no-reboot:
+              command: !Join
+              - ''
+              - - powershell.exe Rename-Computer -NewName DC1 -force -restart
+              waitAfterCompletion: forever
+        installADDS:
+          commands:
+            1-install-prereqs:
+              command: !Join
+              - ''
+              - - >-
+                  powershell.exe -Command "Install-WindowsFeature
+                  AD-Domain-Services, rsat-adds -IncludeAllSubFeature
+              waitAfterCompletion: '0'
+            2-install-adds:
+              command: !Join
+              - ''
+              - - 'powershell.exe -Command Install-ADDSForest -DomainName '
+                - !Ref DomainDNSName
+                - ' -SafeModeAdministratorPassword (ConvertTo-SecureString '''
+                - !Ref AdminPassword
+                - >-
+                  ' -AsPlainText -Force) -DomainMode Win2012R2
+                  -DomainNetbiosName
+                - !Ref DomainNetBiosName
+                - ' -ForestMode Win2012R2 -Confirm:$false -Force'
+              waitAfterCompletion: forever
+            3-restart-service:
+              command: !Join
+              - ''
+              - - powershell.exe -Command Restart-Service NetLogon -EA 0
+              waitAfterCompletion: '20'
+            4-start-ADWS:
+              command: !Join
+              - ''
+              - - >-
+                  powershell.exe -Command $s = Get-Service -Name ADWS; while
+                  ($s.Status -ne 'Running'){ Start-Service ADWS; Start-Sleep 3
+                  }
+              waitAfterCompletion: '30'
+            5-create-adminuser:
+              command: !Join
+              - ''
+              - - 'powershell.exe -Command $u = New-ADUser '
+                - !Ref DomainAdminUser
+                - ' -SamAccountName '
+                - !Ref DomainAdminUser
+                - ' -UserPrincipalName '
+                - !Ref DomainAdminUser
+                - '@'
+                - !Ref DomainDNSName
+                - ' -AccountPassword (ConvertTo-SecureString '''
+                - !Ref AdminPassword
+                - >-
+                  ' -AsPlainText -Force) -Enabled $true -PasswordNeverExpires
+                  $true -PassThru; Add-ADGroupMember -Identity 'domain admins'
+                  -Members $u
+              waitAfterCompletion: '0'
+        finalize:
+          commands:
+            a-signal-success:
+              command: !Join
+              - ''
+              - - 'cfn-signal.exe -e 0 '
+                - !Base64
+                  Ref: DomainControllerWaitHandle
+                - ''
+    Properties:
+      BlockDeviceMappings:
+      - DeviceName: /dev/sda1
+        Ebs:
+          VolumeSize: '40'
+      ImageId: !Ref AWSAmiId
+      InstanceType: m4.large
+      KeyName: !Ref KeyName
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: 'false'
+        DeleteOnTermination: 'true'
+        DeviceIndex: '0'
+        GroupSet:
+        - !Ref PrivateSecurityGroup
+        PrivateIpAddress: 10.1.3.100
+        SubnetId: !Ref PrivateSubnetAZ1
+      Tags:
+      - Key: Name
+        Value: DC1
+      UserData: !Base64
+        'Fn::Join':
+        - ''
+        - - |
+            <script>
+            - 'cfn-init.exe -v -c config -s '
+            - !Ref 'AWS::StackId'
+            - ' -r DC1'
+            - ' --region '
+            - !Ref 'AWS::Region'
+            - |+
+
+            - |
+            </script>
+  LabADFS:
+    Properties:
+      ImageId: !Ref AWSAmiId
+      InstanceType: m4.large
+      IamInstanceProfile: !Ref RootInstanceProfile
+      KeyName: !Ref KeyName
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: 'true'
+        DeleteOnTermination: 'true'
+        DeviceIndex: '0'
+        GroupSet:
+        - !Ref QwikLabWebSecGroup
+        PrivateIpAddress: 10.1.1.101
+        SubnetId: !Ref PublicSubnetAZ1
+      Tags:
+      - Key: Name
+        Value: LabADFS
+      UserData: !Base64
+        'Fn::Join':
+        - ''
+        - - |
+            <powershell>
+            - |
+            ### Change local admin password...
+            - '([adsi]"WinNT://$env:computername/Administrator").SetPassword('''
+            - !Ref AdminPassword
+            - |
+            ')
+            - |
+            ###Install IIS
+            - |
+            Add-WindowsFeature Web-Server
+            - |
+            ###Install IIS Mgmt Console
+            - |
+            Add-WindowsFeature Web-Mgmt-Console
+            - |
+            ###Install AD Tools
+            - |
+            Add-WindowsFeature rsat-ad-tools
+            - |
+            ###Install ADFS
+            - |
+            Add-WindowsFeature ADFS-Federation
+            - |
+            ### Wait for DC to be fully available...
+            - |
+            $resource = 'DomainControllerWaitCondition'
+            - $region = '
+            - !Ref 'AWS::Region'
+            - |-
+            '
+            $stack = '
+            - !Ref 'AWS::StackId'
+            - >
+            '
+
+            $output = (Get-CFNStackResources -StackName $stack
+            -LogicalResourceId $resource -Region $region)
+            - >
+            while (($output -eq $null) -or ($output.ResourceStatus -ne
+            'CREATE_COMPLETE') -and ($output.ResourceStatus -ne
+            'UPDATE_COMPLETE')) {
+            - |2
+                Start-Sleep 5
+            - |2
+                $output = (Get-CFNStackResources -StackName $stack -LogicalResourceId $resource -Region $region)
+            - |
+            }
+            - |
+            ### Join the domain...
+            - |
+            $computer = Get-WmiObject -Class Win32_ComputerSystem
+            - |
+            if ($computer.domain -eq 'WORKGROUP') {
+            - |2
+              $adapter = Get-NetAdapter -Name 'Ethernet*'
+            - '  Set-DNSClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses ('''
+            - !GetAtt
+            - DC1
+            - PrivateIp
+            - |
+            ')
+            - '  $domain = '''
+            - !Ref DomainDNSName
+            - |
+            '
+            - '  $password = '''
+            - !Ref AdminPassword
+            - |
+            ' | ConvertTo-SecureString -asPlainText -Force
+            - '  $Administrator = '''
+            - !Ref DomainNetBiosName
+            - \
+            - !Ref DomainAdminUser
+            - |
+            '
+            - |2
+              $credential = New-Object System.Management.Automation.PSCredential($Administrator,$password)
+            - |2
+              Add-Computer -DomainName $domain -Credential $credential -Force -restart
+            - |
+            }
+            - |
+            </powershell>
+    Type: 'AWS::EC2::Instance'
+  PrivateSecurityGroup:
+    Properties:
+      GroupDescription: This is the security group for Active Directory
+      SecurityGroupEgress:
+      - CidrIp: 10.1.0.0/16
+        FromPort: '0'
+        IpProtocol: tcp
+        ToPort: '65535'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '0'
+        IpProtocol: udp
+        ToPort: '65535'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '-1'
+        IpProtocol: icmp
+        ToPort: '-1'
+      - CidrIp: 0.0.0.0/0
+        FromPort: '80'
+        IpProtocol: tcp
+        ToPort: '80'
+      - CidrIp: 0.0.0.0/0
+        FromPort: '443'
+        IpProtocol: tcp
+        ToPort: '443'
+      SecurityGroupIngress:
+      - FromPort: '3389'
+        IpProtocol: tcp
+        SourceSecurityGroupId: !Ref QwikLabWebSecGroup
+        ToPort: '3389'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '0'
+        IpProtocol: tcp
+        ToPort: '65535'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '0'
+        IpProtocol: udp
+        ToPort: '65535'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '-1'
+        IpProtocol: icmp
+        ToPort: '-1'
+      Tags:
+      - Key: Name
+        Value: PrivateSecurityGroup
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::SecurityGroup'
+  QwikLabWebSecGroup:
+    Properties:
+      GroupDescription: This is the security group for the public web server with ADFS
+      SecurityGroupEgress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: '80'
+        IpProtocol: tcp
+        ToPort: '80'
+      - CidrIp: 0.0.0.0/0
+        FromPort: '443'
+        IpProtocol: tcp
+        ToPort: '443'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '3389'
+        IpProtocol: tcp
+        ToPort: '3389'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '0'
+        IpProtocol: tcp
+        ToPort: '65535'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '0'
+        IpProtocol: udp
+        ToPort: '65535'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '-1'
+        IpProtocol: icmp
+        ToPort: '-1'
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: '443'
+        IpProtocol: tcp
+        ToPort: '443'
+      - CidrIp: 0.0.0.0/0
+        FromPort: '3389'
+        IpProtocol: tcp
+        ToPort: '3389'
+      - CidrIp: 10.1.0.0/16
+        FromPort: '-1'
+        IpProtocol: icmp
+        ToPort: '-1'
+      Tags:
+      - Key: Name
+        Value: QwikLabWebSecGroup
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::SecurityGroup'
+  PublicSubnetAZ1:
+    Properties:
+      AvailabilityZone: !Select
+      - 0
+      - !GetAZs ''
+      CidrBlock: 10.1.1.0/24
+      Tags:
+      - Key: Name
+        Value: PublicSubnetAZ1
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::Subnet'
+  PublicSubnetAZ1SubnetAssociation:
+    Properties:
+      RouteTableId: !Ref DMZRouteTable
+      SubnetId: !Ref PublicSubnetAZ1
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+  PrivateSubnetAZ1:
+    Properties:
+      AvailabilityZone: !Select
+      - 0
+      - !GetAZs ''
+      CidrBlock: 10.1.3.0/24
+      Tags:
+      - Key: Name
+        Value: PrivateSubnetAZ1
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::Subnet'
+  PrivateSubnetAZ1SubnetAssociation:
+    Properties:
+      RouteTableId: !Ref InternalRouteTable
+      SubnetId: !Ref PrivateSubnetAZ1
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+  DMZRouteTable:
+    Properties:
+      Tags:
+      - Key: Application
+        Value: !Ref 'AWS::StackName'
+      - Key: Name
+        Value: DMZRouteTable
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::RouteTable'
+  InternalRouteTable:
+    Properties:
+      Tags:
+      - Key: Name
+        Value: InternalRouteTable
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::RouteTable'
+  NATRoute:
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref AWSNat
+      RouteTableId: !Ref InternalRouteTable
+    Type: 'AWS::EC2::Route'
+  PublicRoute:
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref DMZRouteTable
+    Type: 'AWS::EC2::Route'
+  VPC:
+    Properties:
+      CidrBlock: 10.1.0.0/16
+      EnableDnsHostnames: 'true'
+      EnableDnsSupport: 'true'
+      Tags:
+      - Key: Name
+        Value: VPC
+    Type: 'AWS::EC2::VPC'
+  InternetGateway:
+    Properties:
+      Tags:
+      - Key: Name
+        Value: InternetGateway
+    Type: 'AWS::EC2::InternetGateway'
+  InternetGatewayAttachment:
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+  AWSNat:
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      AllocationId: !GetAtt
+      - NatEip
+      - AllocationId
+      SubnetId: !Ref PublicSubnetAZ1
+    Type: 'AWS::EC2::NatGateway'
+  NatEip:
+    Properties:
+      Domain: vpc
+    Type: 'AWS::EC2::EIP'
