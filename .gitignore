@@ -6,3 +6,5 @@ keys
 *.vagrant
 *.terraform
 *.tfstate*
+/tooling/repos/
+/tooling/repos
