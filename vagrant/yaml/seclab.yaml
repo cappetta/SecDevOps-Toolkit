@@ -10,3 +10,4 @@
   secgroup_name: 'sg-xxxxxx'
   aws_keypair_name: "xxxxxx"
   type: "t2.small"
+  userData: 'cloud-init/basic_setup.txt'
