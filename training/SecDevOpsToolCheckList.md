@@ -20,6 +20,9 @@ https://help.github.com/articles/removing-sensitive-data-from-a-repository/
     - [ ] Gherkin / CICD:  https://blog.steamulo.com/improve-your-gitflow-with-docker-gitlab-ci-and-gherkin-60faddd39bb2
     - [ ] Cucumber: http://www.wellho.net/mouth/4382_Second-step-Cucumber-and-Gherkin-beyond-Hello-World.html
     - [ ] Terratest: https://github.com/gruntwork-io/terratest
+    - [ ] Inspec: 
+        - [ ] Security Scan Docker Containers: https://grdnr.io/2017-08-14/security-scanning-docker-containers-with-inspec/
+        - [ ] Inspec Hardening Templates : https://github.com/dev-sec
 
 - [ ] AWS 
     - [ ] CloudSploit: 
@@ -75,6 +78,7 @@ https://help.github.com/articles/removing-sensitive-data-from-a-repository/
 - [ ] Offensive:
   - [ ] PACU - Open-source AWS exploitation framework:      https://github.com/RhinoSecurityLabs/pacu
   - [ ] Rhino Security: Cloud Goat:                         https://github.com/RhinoSecurityLabs/cloudgoat
+  - [ ] VulnHub-Like VMs - https://www.abatchy.com/2017/02/oscp-like-vulnhub-vms
         
 
 - [ ] Docker 
@@ -82,7 +86,6 @@ https://help.github.com/articles/removing-sensitive-data-from-a-repository/
         - [ ] Amass (DNS recon):                            https://github.com/OWASP/Amass
         - [ ] Security Shephard (trainer):                  `docker pull owasp/security-shepherd`
         - [x] Dependency Checker:                           located in `tooling/scripts/docker_owasp-dependency-check.sh`
-    - 
     - [ ]  Vuln Containers: 
         - [x] Web Service - https://github.com/Cyrivs89/docker-dvws 
         - [x] WebGoat: `docker run -p 8080:8080 -t webgoat/webgoat-8.0` 
@@ -114,10 +117,12 @@ https://help.github.com/articles/removing-sensitive-data-from-a-repository/
     - [ ] Supervisord - https://serversforhackers.com/c/monitoring-processes-with-supervisord
     
 - [ ] Technical references:
-    - [ ] Terraform Modules: https://docs.cloudposse.com/
     - [ ] Red Team Environment w/ DNS: https://rastamouse.me/2017/08/automated-red-team-infrastructure-deployment-with-terraform---part-1/
 
 - [ ] Terraform 
+    - [ ] CLI enhancements: 
+        - [x] https://github.com/coinbase/terraform-landscape
+    - [ ] Modules: https://docs.cloudposse.com/
     - [ ] Terraform-compliance (BDD): https://github.com/eerkunt/terraform-compliance
     - [ ] Kitchen Terraform: https://github.com/newcontext-oss/kitchen-terraform 
     - [ ] Modules: 
@@ -136,7 +141,7 @@ https://help.github.com/articles/removing-sensitive-data-from-a-repository/
     - [ ] Modern Honey Pot https://github.com/threatstream/mhn
     - [ ] Cisco ASA: https://github.com/Cymmetria/ciscoasa_honeypot
 
-https://www.abatchy.com/2017/02/oscp-like-vulnhub-vms
+
 
 
 OpenSource Intelligence; 
