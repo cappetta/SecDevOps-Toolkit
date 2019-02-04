@@ -57,36 +57,3 @@ Once you update the variables manifests you are able to leverage terraform to cr
 
 
 
-```
-│   ├── terraform
-│   │   ├── Armor_test
-│   │   │   ├── app
-│   │   │   │   └── index.php
-│   │   │   ├── app.zip
-│   │   │   ├── armor.config
-│   │   │   ├── armor_automation.pem
-│   │   │   ├── ebext.config
-│   │   │   ├── index.php
-│   │   │   └── variables.tf
-│   │   ├── SecDevOps
-│   │   │   ├── terraform.tfstate
-│   │   │   ├── terraform.tfstate.backup
-│   │   │   └── variables.tf
-│   │   ├── create_manifest.py
-│   │   ├── getTerraformExamples.sh
-│   │   ├── kali
-│   │   │   └── kali.tf
-│   │   ├── lambda
-│   │   │   ├── lambda.tf
-│   │   │   ├── template.tf
-│   │   │   └── variables.tf
-│   │   ├── linux
-│   │   │   ├── linux_targets.tf
-│   │   │   └── variables.tf
-│   │   ├── network
-│   │   │   ├── network.tf
-│   │   │   ├── terraform.tfstate
-│   │   │   ├── terraform.tfstate.backup
-│   │   │   └── variables.tf
-
-```
