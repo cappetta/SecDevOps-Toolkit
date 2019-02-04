@@ -54,6 +54,3 @@ provider "aws" {
 
 # After configuring
 Once you update the variables manifests you are able to leverage terraform to create, setup, & destroy various AWS services.
-
-
-
