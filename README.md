@@ -26,6 +26,9 @@ benefit them.
 The tools below require you download/install them on your target system(s)
 before using any of the examples in the folders.  
 
+## Research: 
+The Ultimate cheat-sheet: `https://lzone.de/cheat-sheet/jq`
+
 ## Wiki Content:
  The wiki contains key information outlining general usage of the tools.  
  The tooling folder contains a few other tools not outlined below and 
