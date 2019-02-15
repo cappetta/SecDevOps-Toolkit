@@ -28,6 +28,8 @@ before using any of the examples in the folders.
 
 ## Research: 
 The Ultimate cheat-sheet: `https://lzone.de/cheat-sheet/jq`
+The ultimate Arsenal of AWS Cloud Security Tools: `https://github.com/toniblyx/my-arsenal-of-aws-security-tools/blob/master/README.md`
+
 
 ## Wiki Content:
  The wiki contains key information outlining general usage of the tools.  
