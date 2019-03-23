@@ -22,7 +22,8 @@ https://github.com/codingo/Reconnoitre
 https://github.com/wwong99/pentest-notes/blob/master/oscp_resources/OSCP-Survival-Guide.md#enumeration
 https://github.com/AnasFullStack/Penetration-Testing-Study-Notes/blob/master/oscp_resources/OSCP-Survival-Guide.md#passive-information-gathering
 
-
+https://www.willchatham.com/general/oscp-and-pwk-tips-resources-tools/
+linux priv escalation: http://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/
 
 https://github.com/pwnwiki/pwnwiki.github.io
 

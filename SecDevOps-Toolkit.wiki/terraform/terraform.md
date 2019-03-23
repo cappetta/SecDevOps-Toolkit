@@ -54,3 +54,7 @@ provider "aws" {
 
 # After configuring
 Once you update the variables manifests you are able to leverage terraform to create, setup, & destroy various AWS services.
+
+# Other helpful Terraform Resources:
+
+[CloudPosse GitHub](https://github.com/cloudposse/terraform-aws-s3-bucket)
