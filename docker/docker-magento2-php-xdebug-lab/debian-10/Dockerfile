@@ -72,43 +72,19 @@ RUN curl -L https://github.com/docker-library/php/raw/master/docker-php-ext-conf
     mkdir -p /usr/src && \
     curl -fsSL -o /usr/src/php.tar.xz "$PHP_URL"
 
-#RUN docker-php-ext-install \
-#      gd \
-#      intl \
-#      mbstring \
-#      pdo_mysql \
-#      soap \
-#      xsl \
-#      zip
-
-#RUN apt-get update -y && \
-#    apt-get install -y libmcrypt-dev && \
-#    pecl install mcrypt-1.0.1 && \
-#    docker-php-ext-enable mcrypt
-
-
 ARG WITH_XDEBUG=false
 
 RUN if [ $WITH_XDEBUG = "true" ] ; then \
         pecl install xdebug; \
         docker-php-ext-enable xdebug; \
-        find /opt -name "php.ini"; \
-        echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-        echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-        echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-        echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     fi ;
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY xdebug.ini /etc/php/7.0/mods-available/xdebug.ini
-
-#COPY start-container /usr/local/bin/start-container
-#RUN chmod +x /usr/local/bin/start-container
+COPY mag.php.ini /opt/bitnami/php/conf/php.ini
+COPY mag.php.ini /opt/bitnami/php/lib/php.ini
 
 RUN find /opt/bitnami/magento/htdocs -type d -print0 | xargs -0 chmod 775 && find /opt/bitnami/magento/htdocs -type f -print0 | xargs -0 chmod 664 && chown -R bitnami:daemon /opt/bitnami/magento/htdocs
-
-
 
 EXPOSE 80 443
 
